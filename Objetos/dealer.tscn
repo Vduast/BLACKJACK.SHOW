@@ -1,0 +1,186 @@
+[gd_scene format=3 uid="uid://fjxfkamwtrq5"]
+
+[ext_resource type="PackedScene" uid="uid://7b0nl2rgay3x" path="res://Menus/DEALER.glb" id="1_m5jkw"]
+[ext_resource type="Script" uid="uid://c8dfj6gpxyyep" path="res://Scripts/dealer.gd" id="2_46f5c"]
+[ext_resource type="Material" uid="uid://ukx1o7564608" path="res://Menus/Material.tres" id="3_wfjoc"]
+
+[sub_resource type="JointLimitationCone3D" id="JointLimitationCone3D_46f5c"]
+angle = 1.2217305
+
+[sub_resource type="JointLimitationCone3D" id="JointLimitationCone3D_wfjoc"]
+angle = 1.2217305
+
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_7req8"]
+xfade_time = 0.5
+allow_transition_to_self = true
+input_0/name = "HandMoveR"
+input_0/auto_advance = false
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "HandIdleR"
+input_1/auto_advance = false
+input_1/break_loop_at_end = false
+input_1/reset = true
+
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_xseoh"]
+xfade_time = 0.5
+allow_transition_to_self = true
+input_0/name = "HandMoveL"
+input_0/auto_advance = false
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "HandIdleL"
+input_1/auto_advance = false
+input_1/break_loop_at_end = false
+input_1/reset = true
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_m5jkw"]
+animation = &"HandIdleL"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_wfjoc"]
+animation = &"HandIdleR"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_unuaa"]
+animation = &"HandMoveL"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_46f5c"]
+animation = &"HandMoveR"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_4sqoj"]
+filter_enabled = true
+filters = ["Armature/Skeleton3D:Bone.003", "Armature/Skeleton3D:Bone.004", "Armature/Skeleton3D:Bone.008.L", "Armature/Skeleton3D:Bone.009.L", "Armature/Skeleton3D:Bone.010.L", "Armature/Skeleton3D:Bone.011.L", "Armature/Skeleton3D:Bone.012.L", "Armature/Skeleton3D:Bone.013.L", "Armature/Skeleton3D:Bone.014.L", "Armature/Skeleton3D:Bone.015.L", "Armature/Skeleton3D:Bone.016.L", "Armature/Skeleton3D:Bone.017.L", "Armature/Skeleton3D:Bone.018.L", "Armature/Skeleton3D:Bone.019.L", "Armature/Skeleton3D:Bone.020.L", "Armature/Skeleton3D:Bone.021.L", "Armature/Skeleton3D:Bone.022.L"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_q18bh"]
+filter_enabled = true
+filters = ["Armature/Skeleton3D:Bone.003", "Armature/Skeleton3D:Bone.004"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_tcvf1"]
+animation = &"Talk"
+use_custom_timeline = true
+timeline_length = 1.0
+stretch_time_scale = false
+start_offset = 0.0
+loop_mode = 2
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_16aoc"]
+graph_offset = Vector2(48.569305, 18.472824)
+nodes/output/position = Vector2(1060, 360)
+nodes/HandMoveL/node = SubResource("AnimationNodeAnimation_unuaa")
+nodes/HandMoveL/position = Vector2(260, 40)
+nodes/HandIdleL/node = SubResource("AnimationNodeAnimation_m5jkw")
+nodes/HandIdleL/position = Vector2(80, 60)
+nodes/EstadoIZQ/node = SubResource("AnimationNodeTransition_xseoh")
+nodes/EstadoIZQ/position = Vector2(500, 100)
+nodes/HandMoveR/node = SubResource("AnimationNodeAnimation_46f5c")
+nodes/HandMoveR/position = Vector2(240, 340)
+nodes/HandIdleR/node = SubResource("AnimationNodeAnimation_wfjoc")
+nodes/HandIdleR/position = Vector2(100, 360)
+nodes/EstadoDER/node = SubResource("AnimationNodeTransition_7req8")
+nodes/EstadoDER/position = Vector2(500, 360)
+nodes/MezclarBrazos/node = SubResource("AnimationNodeBlend2_4sqoj")
+nodes/MezclarBrazos/position = Vector2(700, 100)
+nodes/Talk/node = SubResource("AnimationNodeAnimation_tcvf1")
+nodes/Talk/position = Vector2(720, 400)
+nodes/MezclarHablar/node = SubResource("AnimationNodeBlend2_q18bh")
+nodes/MezclarHablar/position = Vector2(880, 340)
+node_connections = [&"output", 0, &"MezclarHablar", &"EstadoIZQ", 0, &"HandMoveL", &"EstadoIZQ", 1, &"HandIdleL", &"EstadoDER", 0, &"HandMoveR", &"EstadoDER", 1, &"HandIdleR", &"MezclarBrazos", 0, &"EstadoIZQ", &"MezclarBrazos", 1, &"EstadoDER", &"MezclarHablar", 0, &"MezclarBrazos", &"MezclarHablar", 1, &"Talk"]
+
+[node name="DEALER" unique_id=82334987 instance=ExtResource("1_m5jkw")]
+script = ExtResource("2_46f5c")
+
+[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(148079701) index="0" unique_id=93210608]
+bones/3/rotation = Quaternion(0.056319747, 0.0012497274, 0.0011154836, 0.9984115)
+bones/5/rotation = Quaternion(-0.8940278, -5.471966e-08, -1.0709476e-07, 0.44801152)
+bones/10/rotation = Quaternion(6.2537733e-06, -0.0010831627, -0.005796544, 0.99998266)
+bones/11/rotation = Quaternion(3.370823e-08, 1.4798033e-07, 0.15849856, 0.9873592)
+bones/12/rotation = Quaternion(-1.2822979e-08, 3.4671502e-10, 0.16914275, 0.98559153)
+bones/14/rotation = Quaternion(-0.0080398675, -0.001125681, -0.0017332126, 0.9999656)
+bones/15/rotation = Quaternion(0.0056997035, -0.0015388062, 0.15446863, 0.98798007)
+bones/16/rotation = Quaternion(-0.0039493735, -0.0014495826, 0.16913652, 0.98558366)
+bones/18/rotation = Quaternion(-0.006899906, -0.0011110045, 0.000333008, 0.99997556)
+bones/19/rotation = Quaternion(0.0049970224, -0.0013079904, 0.15243031, 0.98830074)
+bones/20/rotation = Quaternion(-0.0037783892, -0.0012733708, 0.16913788, 0.9855844)
+bones/22/rotation = Quaternion(-0.0070301117, -0.0011128266, 9.7000084e-05, 0.9999747)
+bones/23/rotation = Quaternion(0.0067745293, -0.0010684885, 0.15191996, 0.98836905)
+bones/24/rotation = Quaternion(-0.008184292, -0.00146538, 0.17061774, 0.9853022)
+bones/26/rotation = Quaternion(-0.36295286, 0.08446669, 0.32766363, 0.8681976)
+bones/27/rotation = Quaternion(0.033739116, 0.100616425, 0.02078784, 0.99413574)
+bones/28/rotation = Quaternion(0.030497562, 0.041291084, 0.08809237, 0.9947888)
+bones/33/rotation = Quaternion(-5.032969e-05, 0.0010819465, -0.04646745, 0.99891925)
+bones/34/rotation = Quaternion(1.6150725e-08, -1.1673217e-07, -0.1960054, 0.9806028)
+bones/35/rotation = Quaternion(-1.4488582e-08, -5.879417e-10, -0.19113621, 0.9815635)
+bones/37/rotation = Quaternion(-0.0075240578, 0.0014937893, -0.04965115, 0.9987372)
+bones/38/rotation = Quaternion(0.005126277, 0.0018399186, -0.19286041, 0.98121107)
+bones/39/rotation = Quaternion(-0.003461856, 0.0015400138, -0.19113001, 0.9815575)
+bones/41/rotation = Quaternion(-0.006693415, 0.0014413958, -0.051157963, 0.9986671)
+bones/42/rotation = Quaternion(0.004616523, 0.0016257814, -0.1913831, 0.98150325)
+bones/43/rotation = Quaternion(-0.0033253464, 0.0013921058, -0.1911312, 0.98155797)
+bones/45/rotation = Quaternion(-0.0072758147, 0.0014782666, -0.05010145, 0.9987166)
+bones/46/rotation = Quaternion(0.0048987945, 0.0017904293, -0.19241892, 0.9812991)
+bones/47/rotation = Quaternion(-0.003789025, 0.0015967721, -0.1911296, 0.98155624)
+bones/49/rotation = Quaternion(-0.33994788, -0.1705137, -0.35918984, 0.85225767)
+bones/50/rotation = Quaternion(0.02861094, -0.091820456, -0.010485968, 0.99530923)
+bones/51/rotation = Quaternion(0.06593175, -0.11026054, -0.16701096, 0.9775495)
+
+[node name="Sphere_002" parent="Armature/Skeleton3D" index="0" unique_id=480424771]
+surface_material_override/0 = ExtResource("3_wfjoc")
+
+[node name="CCDIK3D" type="CCDIK3D" parent="Armature/Skeleton3D" index="1" unique_id=1371947886]
+transform = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0.0063405167, 0, 0)
+max_iterations = 16
+angular_delta_limit = 3.141592653589793
+deterministic = true
+setting_count = 2
+settings/0/target_node = NodePath("../../../BrazoI")
+settings/1/target_node = NodePath("../../../BrazoD")
+settings/0/root_bone_name = "Bone.005.R"
+settings/0/root_bone = 7
+settings/0/end_bone_name = "Bone.007.R"
+settings/0/end_bone = 9
+settings/0/extend_end_bone = true
+settings/0/end_bone/direction = 6
+settings/0/end_bone/length = 1.0
+settings/0/joint_count = 3
+settings/1/root_bone_name = "Bone.005.L"
+settings/1/root_bone = 30
+settings/1/end_bone_name = "Bone.007.L"
+settings/1/end_bone = 32
+settings/1/extend_end_bone = true
+settings/1/end_bone/direction = 6
+settings/1/end_bone/length = 1.0
+settings/1/joint_count = 3
+settings/0/joints/0/rotation_axis = 3
+settings/0/joints/0/limitation = null
+settings/0/joints/1/rotation_axis = 3
+settings/0/joints/1/limitation = null
+settings/0/joints/2/rotation_axis = 2
+settings/0/joints/2/limitation = SubResource("JointLimitationCone3D_46f5c")
+settings/0/joints/2/limitation/right_axis = 0
+settings/0/joints/2/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
+settings/1/joints/0/rotation_axis = 3
+settings/1/joints/0/limitation = null
+settings/1/joints/1/rotation_axis = 3
+settings/1/joints/1/limitation = null
+settings/1/joints/2/rotation_axis = 2
+settings/1/joints/2/limitation = SubResource("JointLimitationCone3D_wfjoc")
+settings/1/joints/2/limitation/right_axis = 0
+settings/1/joints/2/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
+
+[node name="AnimationTree" type="AnimationTree" parent="AnimationPlayer" parent_id_path=PackedInt32Array(2035540264) index="0" unique_id=955942032]
+root_node = NodePath("../..")
+tree_root = SubResource("AnimationNodeBlendTree_16aoc")
+anim_player = NodePath("..")
+parameters/EstadoIZQ/current_state = "HandIdleL"
+parameters/EstadoIZQ/transition_request = ""
+parameters/EstadoIZQ/current_index = 1
+parameters/EstadoDER/current_state = "HandIdleR"
+parameters/EstadoDER/transition_request = ""
+parameters/EstadoDER/current_index = 1
+parameters/MezclarBrazos/blend_amount = 1.0
+parameters/MezclarHablar/blend_amount = 1.0
+
+[node name="BrazoD" type="Marker3D" parent="." index="2" unique_id=1210350912]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5940053, 7.7376795, -2.7545285)
+
+[node name="BrazoI" type="Marker3D" parent="." index="3" unique_id=1165096512]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5711708, 7.7518396, -2.8699584)

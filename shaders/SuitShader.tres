@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dl4lytkowok31"]
+
+[ext_resource type="Shader" uid="uid://4sr438ra2lh6" path="res://shaders/suitshaders.gdshader" id="1_l5xdg"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_l5xdg")
+shader_parameter/suit_id = 0

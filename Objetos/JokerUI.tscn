@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://d0hadah0b3g5u"]
+
+[ext_resource type="Script" uid="uid://b8nl32gji43h6" path="res://Scripts/JokerUI.gd" id="1_3tyk1"]
+[ext_resource type="Shader" uid="uid://ctdvx7etrb0d7" path="res://Objetos/JokerUI.gdshader" id="1_u8dcs"]
+[ext_resource type="Texture2D" uid="uid://5a32knhwpviw" path="res://models/Diseño sin título (3).png" id="1_uqr4k"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_u8dcs"]
+noise_type = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_lk5h3"]
+noise = SubResource("FastNoiseLite_u8dcs")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lk5h3"]
+shader = ExtResource("1_u8dcs")
+shader_parameter/burn_amount = 0.0
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_lk5h3")
+
+[node name="JokerUI" type="Button" unique_id=1480279496]
+material = SubResource("ShaderMaterial_lk5h3")
+custom_minimum_size = Vector2(200, 250)
+offset_right = 8.0
+offset_bottom = 8.0
+icon = ExtResource("1_uqr4k")
+flat = true
+icon_alignment = 1
+script = ExtResource("1_3tyk1")

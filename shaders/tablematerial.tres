@@ -1,0 +1,15 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://bd863owifvqol"]
+
+[ext_resource type="Shader" uid="uid://bjfnrv7rpl4ub" path="res://Menus/table_ui.gdshader" id="1_e65dr"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_740vh"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bdd6g"]
+noise = SubResource("FastNoiseLite_740vh")
+
+[resource]
+shader = ExtResource("1_e65dr")
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_bdd6g")
+shader_parameter/texture_intensity = 0.09600000456
+shader_parameter/edge_dirt = 0.1770000084075
+shader_parameter/paper_tint = Color(0.95, 0.9, 0.8, 1)

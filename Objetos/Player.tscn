@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://xbfq0abb0ecx"]
+
+[ext_resource type="Script" uid="uid://cwxh4q6k8drme" path="res://Scripts/player.gd" id="1_a202f"]
+[ext_resource type="PackedScene" uid="uid://b7akg8plcn2q8" path="res://models/chair_mp_4_3.glb" id="2_asluq"]
+[ext_resource type="PackedScene" uid="uid://b7brvfa1qx6al" path="res://models/Player.glb" id="3_t2cfw"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_a0tk4"]
+
+[node name="Node3D" type="Node3D" unique_id=711699852]
+script = ExtResource("1_a202f")
+
+[node name="PlayerModel" type="MeshInstance3D" parent="." unique_id=540139966]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0034385, 0)
+visible = false
+mesh = SubResource("CapsuleMesh_a0tk4")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1842545339]
+transform = Transform3D(1, 0, 0, 0, 0.9998868, -0.01504419, 0, 0.01504419, 0.9998868, 0, 2.1334467, -0.23856175)
+fov = 83.63852
+
+[node name="CardPosition" type="Node3D" parent="." unique_id=203982183]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9165298, -1.2040868)
+
+[node name="NameLabel" type="Label3D" parent="." unique_id=1683682184]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1698778, 0)
+
+[node name="ScoreLabel" type="Label3D" parent="." unique_id=329028832]
+
+[node name="chair_mp_4_32" parent="." unique_id=1730239289 instance=ExtResource("2_asluq")]
+transform = Transform3D(-1.4, 0, -2.1139412e-07, 0, 1.4, 0, 2.1139412e-07, 0, -1.4, -0.033073723, 0, 0.059165716)
+
+[node name="Player" parent="." unique_id=461979372 instance=ExtResource("3_t2cfw")]
+transform = Transform3D(-0.35, 0, -5.284853e-08, 0, 0.35, 0, 5.284853e-08, 0, -0.35, 0.0013527274, 0.5274384, 0.0976001)

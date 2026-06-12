@@ -1,0 +1,93 @@
+[gd_scene format=3 uid="uid://bivquiksgedvd"]
+
+[ext_resource type="Script" uid="uid://s7timwfootfw" path="res://Scripts/card_3d.gd" id="1_eeaw3"]
+[ext_resource type="FontFile" uid="uid://bxbtmlkk2vhtr" path="res://models/heavy-equipment.regular.ttf" id="2_vkkeg"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_28dlj"]
+size = Vector2(0.4, 0.6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vkkeg"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_vkkeg"]
+emission_shape = 1
+emission_sphere_radius = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mehw"]
+emission_enabled = true
+emission = Color(0.63529414, 0.14117648, 0, 1)
+emission_energy_multiplier = 5.99
+
+[sub_resource type="QuadMesh" id="QuadMesh_wf6cf"]
+material = SubResource("StandardMaterial3D_7mehw")
+size = Vector2(0.05, 0.05)
+
+[node name="card" type="Node3D" unique_id=1722118268 groups=["cartas"]]
+script = ExtResource("1_eeaw3")
+color_brillo = Color(0.63615894, 0.13959405, 0, 1)
+
+[node name="Mesh" type="MeshInstance3D" parent="." unique_id=2087832163]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0.106086195, 0)
+gi_mode = 2
+mesh = SubResource("QuadMesh_28dlj")
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=2102897222]
+size = Vector2i(400, 600)
+render_target_update_mode = 1
+
+[node name="Panel" type="Panel" parent="SubViewport" unique_id=1280580006]
+custom_minimum_size = Vector2(400, 600)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -300.0
+offset_right = 200.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vkkeg")
+
+[node name="RankLabelTop" type="Label" parent="SubViewport" unique_id=1521809456]
+offset_left = 25.0
+offset_top = 25.0
+offset_right = 65.0
+offset_bottom = 108.0
+pivot_offset = Vector2(40, 40)
+theme_override_fonts/font = ExtResource("2_vkkeg")
+theme_override_font_sizes/font_size = 60
+
+[node name="RankLabelBottom" type="Label" parent="SubViewport" unique_id=1791633155]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -83.0
+grow_horizontal = 0
+grow_vertical = 0
+rotation = 3.1415927
+pivot_offset = Vector2(40, 40)
+theme_override_fonts/font = ExtResource("2_vkkeg")
+theme_override_font_sizes/font_size = 60
+
+[node name="SymbolContainer" type="Control" parent="SubViewport" unique_id=800963173]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ExplosionParticulas" type="GPUParticles3D" parent="." unique_id=344766079]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0750514, 0)
+emitting = false
+explosiveness = 0.55
+randomness = 0.86
+process_material = SubResource("ParticleProcessMaterial_vkkeg")
+draw_pass_1 = SubResource("QuadMesh_wf6cf")

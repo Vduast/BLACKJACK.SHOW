@@ -1,0 +1,180 @@
+[gd_scene format=3 uid="uid://cxs2ix4vabip0"]
+
+[ext_resource type="Script" uid="uid://g2ppwsh5wslu" path="res://Scripts/table.gd" id="1_vjb1k"]
+[ext_resource type="PackedScene" uid="uid://nknnomkpafjy" path="res://Menus/table_ui.tscn" id="2_7tmef"]
+[ext_resource type="AudioStream" uid="uid://bjtde2ffu53fg" path="res://sounds/Air pump_2.wav" id="2_flyr5"]
+[ext_resource type="AudioStream" uid="uid://dc543chfm6xgq" path="res://sounds/bu.mp3" id="2_nnxdf"]
+[ext_resource type="AudioStream" uid="uid://cmloct65uovxn" path="res://sounds/Flashlight off.wav" id="3_7py6j"]
+[ext_resource type="Shader" uid="uid://dlt44f8ydcurl" path="res://Objetos/ground.gdshader" id="4_ngllq"]
+[ext_resource type="AudioStream" uid="uid://bsv5rg1hsu4bq" path="res://sounds/Air pump x3.wav" id="4_nnxdf"]
+[ext_resource type="AudioStream" uid="uid://bfmijf1nf2x4q" path="res://sounds/Match_striking.wav" id="5_6rqeb"]
+[ext_resource type="PackedScene" uid="uid://fjxfkamwtrq5" path="res://Objetos/dealer.tscn" id="5_7tmef"]
+[ext_resource type="Script" uid="uid://bghaddibpt6f1" path="res://addons/crt/crt.gd" id="6_3nbuj"]
+[ext_resource type="AudioStream" uid="uid://skaw7x6i4pg3" path="res://sounds/robotic_hiss.wav" id="6_vntac"]
+[ext_resource type="AudioStream" uid="uid://cv70offhffenf" path="res://sounds/robotic_groan_3.wav" id="7_60ayl"]
+[ext_resource type="Shader" uid="uid://bcuio3pnfygbp" path="res://Objetos/FONDO.gdshader" id="7_ngllq"]
+[ext_resource type="PackedScene" uid="uid://cqmgjvfop5v6h" path="res://Objetos/score_board_3d.tscn" id="8_4desr"]
+[ext_resource type="AudioStream" uid="uid://ihukmk0r6vpm" path="res://sounds/random.wav" id="9_6xixg"]
+[ext_resource type="PackedScene" uid="uid://to1ohweq6gw8" path="res://models/TableBlackack.glb" id="9_dxaed"]
+[ext_resource type="AudioStream" uid="uid://clab5xnleh03n" path="res://sounds/Air-conditioner_Ambient.ogg" id="16_7py6j"]
+
+[sub_resource type="Environment" id="Environment_ngllq"]
+background_mode = 1
+fog_enabled = true
+fog_light_color = Color(0, 0, 0, 1)
+volumetric_fog_albedo = Color(0.08468992, 0.08468992, 0.08468992, 1)
+volumetric_fog_gi_inject = 10.46
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ngllq"]
+seed = 45845
+frequency = 0.0094
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_4desr"]
+noise = SubResource("FastNoiseLite_ngllq")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4desr"]
+render_priority = 0
+shader = ExtResource("4_ngllq")
+shader_parameter/color_1 = Color(0.8, 0.25, 0.1, 1)
+shader_parameter/color_2 = Color(0.15, 0.35, 0.4, 1)
+shader_parameter/color_3 = Color(0.9, 0.85, 0.7, 1)
+shader_parameter/fiber_noise_texture = SubResource("NoiseTexture2D_4desr")
+shader_parameter/fiber_scale = 1.0
+shader_parameter/fiber_depth = 1.1730000557175
+shader_parameter/pattern_scale = 1.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_77yd7"]
+material = SubResource("ShaderMaterial_4desr")
+size = Vector2(3, 3)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ngllq"]
+render_priority = 0
+shader = ExtResource("7_ngllq")
+shader_parameter/color_bg = Color(0.85, 0.75, 0.5, 1)
+shader_parameter/color_accent = Color(0.8, 0.3, 0.1, 1)
+shader_parameter/pattern_scale = 1.0
+shader_parameter/circle_size = 0.4330000205675
+shader_parameter/circle_softness = 0.1950000092625
+shader_parameter/circle_stretch = 1.0
+shader_parameter/roughness = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_4desr"]
+material = SubResource("ShaderMaterial_ngllq")
+size = Vector2(20, 10)
+
+[sub_resource type="QuadMesh" id="QuadMesh_6xixg"]
+material = SubResource("ShaderMaterial_ngllq")
+size = Vector2(10, 10)
+
+[node name="Main" type="Node3D" unique_id=295538546]
+script = ExtResource("1_vjb1k")
+snd_bgm = ExtResource("2_nnxdf")
+snd_deal = ExtResource("2_flyr5")
+snd_action = ExtResource("3_7py6j")
+snd_shuffle = ExtResource("4_nnxdf")
+snd_joker = ExtResource("5_6rqeb")
+snd_win = ExtResource("7_60ayl")
+snd_lose = ExtResource("6_vntac")
+
+[node name="TableUI" parent="." unique_id=1213410963 instance=ExtResource("2_7tmef")]
+
+[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=361590846]
+transform = Transform3D(0.9968942, 0.07263538, -0.030429885, 0.022343896, 0.10964724, 0.9937194, 0.07551574, -0.9913131, 0.10768375, -0.4850211, 18.401705, -0.7431598)
+light_energy = 5.0
+light_indirect_energy = 7.036
+light_volumetric_fog_energy = 8.446
+shadow_enabled = true
+spot_range = 25.843
+spot_attenuation = 0.2
+spot_angle = 21.75124
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="." unique_id=1340964731]
+transform = Transform3D(0.8470969, -0.52809185, 0.059546825, 0.48274338, 0.8114875, 0.3293128, -0.2222289, -0.250214, 0.9423414, 1.9806042, 9.521498, 8.786637)
+light_energy = 5.0
+light_indirect_energy = 7.036
+shadow_enabled = true
+spot_range = 20.344578
+spot_attenuation = 0.64
+spot_angle = 16.51262
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=337170549]
+environment = SubResource("Environment_ngllq")
+
+[node name="TableCenter" type="Node3D" parent="." unique_id=1823894302]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0366697, -2.5842395)
+
+[node name="SpawnPoints" type="Node3D" parent="." unique_id=1695858154]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45525992, 0)
+
+[node name="Seat0" type="Marker3D" parent="SpawnPoints" unique_id=1663986232]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.120546)
+
+[node name="Seat1" type="Marker3D" parent="SpawnPoints" unique_id=980944172]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.307456, 0, 2.3211143)
+
+[node name="Seat2" type="Marker3D" parent="SpawnPoints" unique_id=739263135]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.461384, 0, 2.026839)
+
+[node name="Seat3" type="Marker3D" parent="SpawnPoints" unique_id=679760968]
+transform = Transform3D(0.99861026, -0.00048108218, 0.05269961, 0.00048800168, 0.9999999, -0.00011842988, -0.052699544, 0.0001439833, 0.9986104, -5.891338, 0, -0.884511)
+
+[node name="Seat4" type="Marker3D" parent="SpawnPoints" unique_id=1647886846]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.049578, 0.030185223, -0.42553878)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=1744729246]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 1)
+mesh = SubResource("PlaneMesh_77yd7")
+
+[node name="PlayersContainer" type="Node3D" parent="." unique_id=1416740499]
+
+[node name="DEALER" parent="." unique_id=538310295 instance=ExtResource("5_7tmef")]
+transform = Transform3D(-0.6, 0, -9.059749e-08, 0, 0.6, 0, 9.059749e-08, 0, -0.6, 0, -3.8279705, -3.8051677)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1557691793]
+script = ExtResource("6_3nbuj")
+resolution = Vector2(1280, 720)
+grille_amount = 0.0
+grille_size = 5.0
+roll_line_amount = 0.0
+pixel_strength = -4.0
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="." unique_id=696075109]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09602165, 4.8764753, -13.112504)
+gi_mode = 0
+mesh = SubResource("QuadMesh_4desr")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="." unique_id=924036990]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 13.096022, 4.8764753, -10.112504)
+gi_mode = 0
+mesh = SubResource("QuadMesh_6xixg")
+
+[node name="MeshInstance3D8" type="MeshInstance3D" parent="." unique_id=630634928]
+transform = Transform3D(0.7071067, 0, 0.7071067, 0, 1, 0, -0.7071067, 0, 0.7071067, -11.903978, 4.8764753, -10.112504)
+gi_mode = 0
+mesh = SubResource("QuadMesh_6xixg")
+
+[node name="ScoreBoard3D" parent="." unique_id=901426339 instance=ExtResource("8_4desr")]
+transform = Transform3D(0.9977911, 0.0028987285, 0.06636593, -0.0028973988, 0.9999958, -0.000116296585, -0.06636598, -7.6258526e-05, 0.9977953, -2.7193313, 4.493899, -5.011086)
+
+[node name="sfx_player" type="AudioStreamPlayer3D" parent="." unique_id=1820382275]
+stream = ExtResource("9_6xixg")
+max_distance = 71.03
+bus = &"SFX"
+
+[node name="SpotLight3D3" type="SpotLight3D" parent="." unique_id=614258530]
+transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.8660254, 0, -0.8660254, 0.49999997, 0, 27, 0)
+light_energy = 16.0
+light_indirect_energy = 2.054
+light_size = 0.06
+shadow_enabled = true
+spot_range = 40.0
+spot_angle = 34.24384
+
+[node name="TableBlackack" parent="." unique_id=434470432 instance=ExtResource("9_dxaed")]
+transform = Transform3D(-2.1855695e-07, 0, -5, 0, 5, 0, 5, 0, -2.1855695e-07, 0, -2.2811148, -2.2852793)
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=1395650868]
+stream = ExtResource("16_7py6j")
+autoplay = true
+bus = &"SFX"

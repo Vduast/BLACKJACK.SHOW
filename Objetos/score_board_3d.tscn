@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://cqmgjvfop5v6h"]
+
+[ext_resource type="Script" uid="uid://b8rxqvr7lvbni" path="res://Objetos/score_board_3d.gd" id="1_p88yu"]
+[ext_resource type="PackedScene" uid="uid://dgb01oy7gcogq" path="res://Objetos/score_board_ui.tscn" id="1_tuikj"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_tuikj"]
+size = Vector2(4, 3)
+
+[node name="ScoreBoard3D" type="Node3D" unique_id=901426339]
+script = ExtResource("1_p88yu")
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=1606436620]
+size = Vector2i(800, 600)
+render_target_update_mode = 4
+
+[node name="ScoreBoardUI" parent="SubViewport" unique_id=1264876453 instance=ExtResource("1_tuikj")]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=152068408]
+mesh = SubResource("QuadMesh_tuikj")

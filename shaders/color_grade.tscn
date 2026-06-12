@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://dq3gup32oxu5p"]
+
+[ext_resource type="Shader" uid="uid://bdxlikps52cum" path="res://shaders/color_grade.gdshader" id="1_a43i2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g3i1e"]
+shader = ExtResource("1_a43i2")
+shader_parameter/color_depth = 24.0000010925
+
+[node name="ColorGrade" type="CanvasLayer" unique_id=245080231]
+process_mode = 4
+physics_interpolation_mode = 2
+auto_translate_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1962639845]
+material = SubResource("ShaderMaterial_g3i1e")
+custom_minimum_size = Vector2(1920, 1200)
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2

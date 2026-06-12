@@ -1,0 +1,45 @@
+[gd_resource type="Theme" format=3 uid="uid://dx57a3y5y54mq"]
+
+[ext_resource type="FontFile" uid="uid://bxbtmlkk2vhtr" path="res://models/heavy-equipment.regular.ttf" id="1_l5xbq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hy74k"]
+bg_color = Color(0.8509804, 0.25882354, 0.24313726, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95686275, 0.9098039, 0.75686276, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l5xbq"]
+bg_color = Color(0.720088, 0.19181705, 0.18500257, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kepek"]
+bg_color = Color(0.5842668, 0.14493024, 0.13907316, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[resource]
+Button/colors/font_color = Color(0.95686275, 0.9098039, 0.75686276, 1)
+Button/fonts/font = ExtResource("1_l5xbq")
+Button/styles/disabled = SubResource("StyleBoxFlat_hy74k")
+Button/styles/hover = SubResource("StyleBoxFlat_l5xbq")
+Button/styles/normal = SubResource("StyleBoxFlat_hy74k")
+Button/styles/pressed = SubResource("StyleBoxFlat_kepek")

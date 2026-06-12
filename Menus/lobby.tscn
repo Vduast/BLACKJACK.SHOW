@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://bn0uixtv45pbb"]
+
+[ext_resource type="Script" uid="uid://brkeg6vcggggn" path="res://Scripts/PantallaInteractiva.gd" id="1_q33vh"]
+[ext_resource type="Script" uid="uid://cyh2ded4y7gbj" path="res://Scripts/lobbyui.gd" id="2_u20yl"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kjwba"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_tftiq"]
+material = SubResource("StandardMaterial3D_kjwba")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1gg6n"]
+
+[node name="Lobby" type="Node3D" unique_id=323101993]
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1053229476]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7594378, 0.9980918)
+current = true
+
+[node name="PantallaMesh" type="MeshInstance3D" parent="." unique_id=1202418603]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7118683, 0.08460516)
+mesh = SubResource("QuadMesh_tftiq")
+
+[node name="AreaInteractiva" type="Area3D" parent="PantallaMesh" unique_id=401762064 node_paths=PackedStringArray("viewport", "mesh_instance")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.15557232)
+script = ExtResource("1_q33vh")
+viewport = NodePath("../../LobbyViewport")
+mesh_instance = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PantallaMesh/AreaInteractiva" unique_id=1029586115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.30431888)
+shape = SubResource("BoxShape3D_1gg6n")
+
+[node name="LobbyViewport" type="SubViewport" parent="." unique_id=93735096]
+
+[node name="LobbyUI" type="Control" parent="LobbyViewport" unique_id=556185549]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_u20yl")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LobbyViewport/LobbyUI" unique_id=746916027]
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 512.0
+
+[node name="TitleLabel" type="Label" parent="LobbyViewport/LobbyUI/VBoxContainer" unique_id=1733517889]
+layout_mode = 2
+
+[node name="PlayerList" type="VBoxContainer" parent="LobbyViewport/LobbyUI/VBoxContainer" unique_id=49624347]
+custom_minimum_size = Vector2(512, 50)
+layout_mode = 2
+
+[node name="StartGameButton" type="Button" parent="LobbyViewport/LobbyUI/VBoxContainer" unique_id=1301857985]
+custom_minimum_size = Vector2(512, 50)
+layout_mode = 2
+text = "start"
+
+[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=1042962791]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1725973, 1.7959118)
+spot_range = 2.846771

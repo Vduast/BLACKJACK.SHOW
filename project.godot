@@ -1,0 +1,113 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Blackjack"
+run/main_scene="uid://d4g1h6impu3b8"
+config/features=PackedStringArray("4.6", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+NetworkManager="*uid://df83txtvoonak"
+PantallaInteractiva="*uid://brkeg6vcggggn"
+Transition="*uid://baqdfxp4vwpwv"
+ColorGrade="*uid://dq3gup32oxu5p"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=3
+window/size/resizable=false
+window/vsync/vsync_mode=0
+
+[editor]
+
+import/use_multiple_threads=false
+
+[editor_plugins]
+
+enabled=PackedStringArray()
+
+[global_group]
+
+cartas=""
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+rendering_device/driver.windows="d3d12"
+renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true
+
+[shader_globals]
+
+psx_affine_strength={
+"type": "float",
+"value": 1.0
+}
+psx_bit_depth={
+"type": "int",
+"value": 5
+}
+psx_fog_color={
+"type": "color",
+"value": Color(0.6089745, 0.7140323, 0.7360513, 0)
+}
+psx_fog_far={
+"type": "float",
+"value": 20.0
+}
+psx_fog_near={
+"type": "float",
+"value": 10.0
+}
+psx_snap_distance={
+"type": "float",
+"value": 0.025
+}
+affine_texture_mapping={
+"type": "bool",
+"value": false
+}
+fog_color={
+"type": "color",
+"value": Color(0, 0, 0, 1)
+}
+fog_start_distance={
+"type": "float",
+"value": 0.0
+}
+cull_distance={
+"type": "float",
+"value": 64.0
+}
+texture_filtering={
+"type": "bool",
+"value": true
+}
+texture_lod_halve_distance={
+"type": "float",
+"value": 0.0
+}
+vertex_snap_intensity={
+"type": "int",
+"value": 2
+}
+fog_end_distance={
+"type": "float",
+"value": 0.0
+}
+
+[threading]
+
+worker_pool/max_threads=1

@@ -1,0 +1,22 @@
+[gd_resource type="Theme" format=3 uid="uid://bm0u0mpbjdg64"]
+
+[ext_resource type="FontFile" uid="uid://bxbtmlkk2vhtr" path="res://models/heavy-equipment.regular.ttf" id="1_vqp17"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p55nl"]
+bg_color = Color(0.8509804, 0.36078432, 0.19215687, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[resource]
+Button/fonts/font = ExtResource("1_vqp17")
+Button/styles/disabled = SubResource("StyleBoxFlat_p55nl")
+Button/styles/focus = SubResource("StyleBoxFlat_p55nl")
+Button/styles/hover = SubResource("StyleBoxFlat_p55nl")
+Button/styles/normal = SubResource("StyleBoxFlat_p55nl")
+Button/styles/pressed = SubResource("StyleBoxFlat_p55nl")

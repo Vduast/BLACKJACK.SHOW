@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://vvwtcde4yc4y"
+path="res://.godot/imported/Air conditioner_Ambient.wav-0487445d2167ed8e5390f3684db9949c.sample"
+
+[deps]
+
+source_file="res://sounds/Air conditioner_Ambient.wav"
+dest_files=["res://.godot/imported/Air conditioner_Ambient.wav-0487445d2167ed8e5390f3684db9949c.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

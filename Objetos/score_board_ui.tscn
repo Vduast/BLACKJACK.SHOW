@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://dgb01oy7gcogq"]
+
+[ext_resource type="Script" uid="uid://cbjav2adlgp0p" path="res://Objetos/score_board_ui.gd" id="1_812jd"]
+[ext_resource type="FontFile" uid="uid://dyf28nwm2o2t6" path="res://models/alien-edifice.bold.ttf" id="1_l3gc2"]
+
+[node name="ScoreBoardUI" type="Control" unique_id=1264876453]
+custom_minimum_size = Vector2(800, 600)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_812jd")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1381972322]
+custom_minimum_size = Vector2(800, 600)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.076416485, 0.3167224, 0.1921522, 1)
+
+[node name="StatusDisplay" type="Label" parent="." unique_id=1291710749]
+layout_mode = 0
+offset_left = 41.0
+offset_top = 196.0
+offset_right = 765.0
+offset_bottom = 267.0
+theme_override_fonts/font = ExtResource("1_l3gc2")
+theme_override_font_sizes/font_size = 70
+autowrap_mode = 3
+
+[node name="Label" type="Label" parent="." unique_id=1382237587]
+layout_mode = 0
+offset_left = 255.0
+offset_top = 16.0
+offset_right = 567.0
+offset_bottom = 58.0
+theme_override_fonts/font = ExtResource("1_l3gc2")
+theme_override_font_sizes/font_size = 30
+text = "ESTADO DE LA MESA"
+
+[node name="PlayersList" type="VBoxContainer" parent="." unique_id=176984625]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 85.0
+offset_right = 800.0
+offset_bottom = 599.0

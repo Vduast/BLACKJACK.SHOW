@@ -1,0 +1,514 @@
+[gd_scene format=3 uid="uid://nknnomkpafjy"]
+
+[ext_resource type="Script" uid="uid://dymjmw66mmii6" path="res://Scripts/tableui.gd" id="1_rorf5"]
+[ext_resource type="Theme" uid="uid://dx57a3y5y54mq" path="res://shaders/Menus.tres" id="2_ylva0"]
+[ext_resource type="Material" uid="uid://bd863owifvqol" path="res://shaders/tablematerial.tres" id="3_7dc7d"]
+[ext_resource type="FontFile" uid="uid://bu21ktpypat4g" path="res://models/tippa.regular.ttf" id="4_k6j3a"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xo25w"]
+bg_color = Color(0.2901961, 0.21568628, 0.15686275, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95686275, 0.9098039, 0.75686276, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xwe8w"]
+bg_color = Color(0.13578162, 0.09413449, 0.06121832, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uolsg"]
+bg_color = Color(0.20568448, 0.14899892, 0.10421459, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ve35k"]
+bg_color = Color(0, 0.54901963, 0.6, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95686275, 0.9098039, 0.75686276, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q4u5e"]
+bg_color = Color(3.4894794e-07, 0.1961326, 0.2173287, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8p7np"]
+bg_color = Color(6.497651e-07, 0.31739828, 0.34882936, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_53a3i"]
+bg_color = Color(0.8509804, 0.25882354, 0.24313726, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95686275, 0.9098039, 0.75686276, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uwfy7"]
+bg_color = Color(0.31853792, 0.061053514, 0.05783859, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qnct1"]
+bg_color = Color(0.51092523, 0.12119838, 0.116226636, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ylva0"]
+bg_color = Color(0, 0.41960785, 0.62352943, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95686275, 0.9098039, 0.75686276, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7dc7d"]
+bg_color = Color(0, 0.22475842, 0.3449604, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k6j3a"]
+bg_color = Color(6.016344e-07, 0.30553216, 0.46043962, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_meskd"]
+bg_color = Color(0.35686275, 0.43137255, 0.19607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95686275, 0.9098039, 0.75686276, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i5xaf"]
+bg_color = Color(0.16169798, 0.2015275, 0.075032316, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wbxnp"]
+bg_color = Color(0.23411718, 0.2866828, 0.119020306, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tspo5"]
+bg_color = Color(0.1254902, 0.16078432, 0.05490196, 0.6862745)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95686275, 0.9098039, 0.75686276, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s5jju"]
+bg_color = Color(0.5411765, 0.2, 0.14117648, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95686275, 0.9098039, 0.75686276, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f38lt"]
+bg_color = Color(0.30217984, 0.09654986, 0.06118697, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dgh7v"]
+bg_color = Color(0.40338838, 0.1398488, 0.094500415, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_msij1"]
+bg_color = Color(0.43137255, 0.21176471, 0.40392157, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95686275, 0.9098039, 0.75686276, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4768y"]
+bg_color = Color(0.20976442, 0.08783036, 0.19470167, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qqhqe"]
+bg_color = Color(0.3210545, 0.14903083, 0.29971766, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="TableUI" type="CanvasLayer" unique_id=1213410963]
+script = ExtResource("1_rorf5")
+
+[node name="UI" type="Control" parent="." unique_id=11775279]
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -1.0
+offset_right = -1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="OpenMenuButton" type="Button" parent="UI" unique_id=905821075]
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 0
+offset_left = 1618.0
+offset_top = 73.0
+offset_right = 1818.0
+offset_bottom = 173.0
+theme = ExtResource("2_ylva0")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_xo25w")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_xwe8w")
+theme_override_styles/hover = SubResource("StyleBoxFlat_uolsg")
+text = "Menu"
+
+[node name="OpenMenuButton2" type="Button" parent="UI" unique_id=1252018455]
+material = ExtResource("3_7dc7d")
+custom_minimum_size = Vector2(200, 100)
+layout_mode = 0
+offset_left = 1618.0
+offset_top = 73.0
+offset_right = 1818.0
+offset_bottom = 173.0
+theme = ExtResource("2_ylva0")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_xo25w")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_xwe8w")
+theme_override_styles/hover = SubResource("StyleBoxFlat_uolsg")
+text = "Menu"
+
+[node name="StatusLabel" type="Label" parent="UI" unique_id=550628753]
+layout_mode = 0
+offset_left = 117.0
+offset_top = 121.0
+offset_right = 287.0
+offset_bottom = 163.0
+theme_override_fonts/font = ExtResource("4_k6j3a")
+theme_override_font_sizes/font_size = 30
+text = "Esperando.."
+
+[node name="StartButton" type="Button" parent="UI" unique_id=153000035]
+material = ExtResource("3_7dc7d")
+layout_mode = 0
+offset_left = 1608.0
+offset_top = 296.0
+offset_right = 1832.0
+offset_bottom = 346.0
+theme = ExtResource("2_ylva0")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_ve35k")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_q4u5e")
+theme_override_styles/hover = SubResource("StyleBoxFlat_8p7np")
+text = "Repartir cartas"
+
+[node name="ClearButton" type="Button" parent="UI" unique_id=591641444]
+material = ExtResource("3_7dc7d")
+layout_mode = 0
+offset_left = 1608.0
+offset_top = 351.0
+offset_right = 1832.0
+offset_bottom = 401.0
+theme = ExtResource("2_ylva0")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_53a3i")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_uwfy7")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qnct1")
+text = "Limpiar Mesa"
+
+[node name="JokersContainer" type="HBoxContainer" parent="UI" unique_id=881657758]
+layout_direction = 3
+layout_mode = 0
+offset_left = 47.0
+offset_top = 772.0
+offset_right = 115.0
+offset_bottom = 1020.0
+
+[node name="GamePanel" type="HBoxContainer" parent="UI" unique_id=1283694832]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.021000002
+anchor_bottom = 0.037
+offset_left = 80.0
+offset_top = 755.0
+offset_right = 947.68
+offset_bottom = 892.04
+
+[node name="HitButton" type="Button" parent="UI/GamePanel" unique_id=2059947236]
+material = ExtResource("3_7dc7d")
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = ExtResource("2_ylva0")
+theme_override_font_sizes/font_size = 35
+text = "Pedir Carta"
+
+[node name="StandButton" type="Button" parent="UI/GamePanel" unique_id=935966245]
+material = ExtResource("3_7dc7d")
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = ExtResource("2_ylva0")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_ylva0")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7dc7d")
+theme_override_styles/hover = SubResource("StyleBoxFlat_k6j3a")
+text = "Plantarse"
+
+[node name="DoubleButton" type="Button" parent="UI/GamePanel" unique_id=1506278296]
+material = ExtResource("3_7dc7d")
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = ExtResource("2_ylva0")
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_meskd")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_i5xaf")
+theme_override_styles/hover = SubResource("StyleBoxFlat_wbxnp")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_tspo5")
+text = "Doblar"
+
+[node name="OverlayMenu" type="ColorRect" parent="UI" unique_id=1334556465]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.011764706, 0.011764706, 0.011764706, 0.19607843)
+
+[node name="PauseBox" type="VBoxContainer" parent="UI/OverlayMenu" unique_id=1807803311]
+layout_mode = 0
+offset_left = 541.0
+offset_top = 237.0
+offset_right = 1409.0
+offset_bottom = 937.0
+
+[node name="ContinueButton" type="Button" parent="UI/OverlayMenu/PauseBox" unique_id=1853389119]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Continuar Juego"
+
+[node name="SettingsButton" type="Button" parent="UI/OverlayMenu/PauseBox" unique_id=96464241]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Configuraciones"
+
+[node name="ExitButton" type="Button" parent="UI/OverlayMenu/PauseBox" unique_id=454904135]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Salir al Menú Principal"
+
+[node name="SettingsBox" type="VBoxContainer" parent="UI/OverlayMenu" unique_id=119407052]
+layout_mode = 0
+offset_left = 542.0
+offset_top = 236.0
+offset_right = 1407.0
+offset_bottom = 386.0
+
+[node name="Label" type="Label" parent="UI/OverlayMenu/SettingsBox" unique_id=879615162]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Volumen Principal"
+
+[node name="MasterSlider" type="HSlider" parent="UI/OverlayMenu/SettingsBox" unique_id=750100669]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="Label2" type="Label" parent="UI/OverlayMenu/SettingsBox" unique_id=436263190]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Efectos de Sonido"
+
+[node name="SFXSlider" type="HSlider" parent="UI/OverlayMenu/SettingsBox" unique_id=1633389745]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="Label3" type="Label" parent="UI/OverlayMenu/SettingsBox" unique_id=323511865]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Música"
+
+[node name="MusicSlider" type="HSlider" parent="UI/OverlayMenu/SettingsBox" unique_id=613276374]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="Label4" type="Label" parent="UI/OverlayMenu/SettingsBox" unique_id=165801957]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Voces"
+
+[node name="VozSlider" type="HSlider" parent="UI/OverlayMenu/SettingsBox" unique_id=1069283533]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="BackButton" type="Button" parent="UI/OverlayMenu/SettingsBox" unique_id=769444336]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "Volver"
+
+[node name="JokerActionBox" type="HBoxContainer" parent="UI" unique_id=951230299]
+layout_mode = 0
+offset_left = 1386.0
+offset_top = 546.0
+offset_right = 1817.0
+offset_bottom = 765.0
+
+[node name="BtnCancelar" type="Button" parent="UI/JokerActionBox" unique_id=341457310]
+material = ExtResource("3_7dc7d")
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme = ExtResource("2_ylva0")
+theme_override_colors/font_color = Color(0.95686275, 0.9098039, 0.75686276, 1)
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_s5jju")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_f38lt")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dgh7v")
+text = "CANCELAR"
+
+[node name="BtnUsar" type="Button" parent="UI/JokerActionBox" unique_id=965476908]
+material = ExtResource("3_7dc7d")
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+theme = ExtResource("2_ylva0")
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_msij1")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_4768y")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qqhqe")
+text = "USAR"
+
+[connection signal="pressed" from="UI/OpenMenuButton" to="." method="open_menu_button_pressed"]
+[connection signal="pressed" from="UI/OpenMenuButton" to="." method="_on_open_menu_pressed"]
+[connection signal="pressed" from="UI/OpenMenuButton2" to="." method="open_menu_button_pressed"]
+[connection signal="pressed" from="UI/OpenMenuButton2" to="." method="_on_open_menu_pressed"]
+[connection signal="pressed" from="UI/StartButton" to="." method="start_button_pressed"]
+[connection signal="pressed" from="UI/OverlayMenu/PauseBox/ContinueButton" to="." method="_on_continue_pressed"]
+[connection signal="pressed" from="UI/OverlayMenu/PauseBox/SettingsButton" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="UI/OverlayMenu/PauseBox/ExitButton" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="UI/OverlayMenu/SettingsBox/BackButton" to="." method="_on_back_pressed"]

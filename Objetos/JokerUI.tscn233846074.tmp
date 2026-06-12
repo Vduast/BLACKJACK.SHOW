@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://d0hadah0b3g5u"]
+
+[ext_resource type="Script" uid="uid://b8nl32gji43h6" path="res://JokerUI.gd" id="1_3tyk1"]
+[ext_resource type="Texture2D" uid="uid://5a32knhwpviw" path="res://models/Diseño sin título (3).png" id="1_uqr4k"]
+
+[node name="JokerUI" type="Button" unique_id=1480279496]
+custom_minimum_size = Vector2(200, 250)
+offset_right = 8.0
+offset_bottom = 8.0
+icon = ExtResource("1_uqr4k")
+flat = true
+icon_alignment = 1
+script = ExtResource("1_3tyk1")

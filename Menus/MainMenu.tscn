@@ -1,0 +1,302 @@
+[gd_scene format=3 uid="uid://d4g1h6impu3b8"]
+
+[ext_resource type="Script" uid="uid://brkeg6vcggggn" path="res://Scripts/PantallaInteractiva.gd" id="1_r8dbq"]
+[ext_resource type="Script" uid="uid://dxrtb3ja1487e" path="res://Scripts/MenuUi.gd" id="2_7ihqj"]
+[ext_resource type="FontFile" uid="uid://dyf28nwm2o2t6" path="res://models/alien-edifice.bold.ttf" id="3_1txdl"]
+[ext_resource type="Script" uid="uid://bghaddibpt6f1" path="res://addons/crt/crt.gd" id="3_7ihqj"]
+[ext_resource type="AudioStream" uid="uid://bu77vdibj3s4g" path="res://sounds/Spray.wav" id="3_35kwc"]
+[ext_resource type="FontFile" uid="uid://nyfjcicykbk2" path="res://models/crystal-radio-kit.regular.otf" id="4_m16r1"]
+[ext_resource type="PackedScene" uid="uid://bn1wxdfrjviot" path="res://models/tv60S.glb" id="4_n6o36"]
+[ext_resource type="AudioStream" uid="uid://cmloct65uovxn" path="res://sounds/Flashlight off.wav" id="4_x147o"]
+[ext_resource type="FontFile" uid="uid://brre4xp5m1xu2" path="res://models/lalezar.regular.otf" id="5_0bjyp"]
+[ext_resource type="Texture2D" uid="uid://celuql01gym5q" path="res://models/wall_6.png" id="5_0xbyl"]
+[ext_resource type="AudioStream" uid="uid://cnbcfevwvoq8f" path="res://sounds/switch.wav" id="5_4mmxn"]
+[ext_resource type="Shader" uid="uid://bcuio3pnfygbp" path="res://Objetos/FONDO.gdshader" id="5_5ncg0"]
+[ext_resource type="Texture2D" uid="uid://cw2pnm7vx70qx" path="res://Menus/Diseño_sin_título__1_-removebg-preview.png" id="5_ju15h"]
+[ext_resource type="AudioStream" uid="uid://dct4687tkfftu" path="res://sounds/Metal_twang.wav" id="6_6rlie"]
+[ext_resource type="Theme" uid="uid://bm0u0mpbjdg64" path="res://shaders/TemaJuego.tres" id="7_6rlie"]
+[ext_resource type="AudioStream" uid="uid://ihukmk0r6vpm" path="res://sounds/random.wav" id="15_x147o"]
+[ext_resource type="AudioStream" uid="uid://b3cpk68q77mdp" path="res://sounds/Radio_static.ogg" id="16_4mmxn"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eiy7p"]
+emission_enabled = true
+emission_energy_multiplier = 3.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_i26rj"]
+resource_local_to_scene = true
+material = SubResource("StandardMaterial3D_eiy7p")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_eiy7p"]
+size = Vector3(1, 1, 0.83447266)
+
+[sub_resource type="LabelSettings" id="LabelSettings_m16r1"]
+font = ExtResource("4_m16r1")
+font_size = 40
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m16r1"]
+
+[sub_resource type="Theme" id="Theme_6rlie"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1txdl"]
+albedo_texture = ExtResource("5_0xbyl")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ngllq"]
+render_priority = 0
+shader = ExtResource("5_5ncg0")
+shader_parameter/color_bg = Color(0.85, 0.75, 0.5, 1)
+shader_parameter/color_accent = Color(0.8, 0.3, 0.1, 1)
+shader_parameter/pattern_scale = 0.5
+shader_parameter/circle_size = 0.0
+shader_parameter/circle_softness = 0.1450000068875
+shader_parameter/circle_stretch = 1.0
+shader_parameter/roughness = 1.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_0xbyl"]
+material = SubResource("ShaderMaterial_ngllq")
+size = Vector2(10, 8)
+
+[node name="Node3D" type="Node3D" unique_id=1370715290]
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=807466281]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9946853, 1.0337944)
+current = true
+
+[node name="PantallaMesh" type="MeshInstance3D" parent="." unique_id=787423437]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9969994, 0.08706212)
+mesh = SubResource("QuadMesh_i26rj")
+
+[node name="AreaInteractiva" type="Area3D" parent="PantallaMesh" unique_id=242975608 node_paths=PackedStringArray("viewport", "mesh_instance")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.019661367)
+script = ExtResource("1_r8dbq")
+viewport = NodePath("../../MenuViewport")
+mesh_instance = NodePath("..")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PantallaMesh/AreaInteractiva" unique_id=1046147274]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.38708255)
+shape = SubResource("BoxShape3D_eiy7p")
+
+[node name="MenuViewport" type="SubViewport" parent="." unique_id=1130185777]
+disable_3d = true
+
+[node name="MenuUI" type="Control" parent="MenuViewport" unique_id=1878466646]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("2_7ihqj")
+snd_hover = ExtResource("3_35kwc")
+snd_click = ExtResource("4_x147o")
+snd_transition = ExtResource("5_4mmxn")
+snd_error = ExtResource("6_6rlie")
+
+[node name="ColorRect" type="ColorRect" parent="MenuViewport/MenuUI" unique_id=1196235430]
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(0.85724235, 0.6362516, 0.43378732, 1)
+
+[node name="ConnectionBox" type="VBoxContainer" parent="MenuViewport/MenuUI" unique_id=573871662]
+visible = false
+custom_minimum_size = Vector2(512, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="NameInput" type="LineEdit" parent="MenuViewport/MenuUI/ConnectionBox" unique_id=931976449]
+layout_mode = 2
+text = "Nombre"
+
+[node name="IPInput" type="LineEdit" parent="MenuViewport/MenuUI/ConnectionBox" unique_id=1967527227]
+layout_mode = 2
+
+[node name="HostButton" type="Button" parent="MenuViewport/MenuUI/ConnectionBox" unique_id=682737944]
+layout_mode = 2
+theme = ExtResource("7_6rlie")
+text = "Host"
+
+[node name="JoinButton" type="Button" parent="MenuViewport/MenuUI/ConnectionBox" unique_id=519989917]
+layout_mode = 2
+theme = ExtResource("7_6rlie")
+text = "Join"
+
+[node name="SettingsBox" type="VBoxContainer" parent="MenuViewport/MenuUI" unique_id=1259337012]
+visible = false
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+alignment = 1
+
+[node name="Label" type="Label" parent="MenuViewport/MenuUI/SettingsBox" unique_id=2138831440]
+layout_mode = 2
+text = "Volumen Principal"
+
+[node name="MasterSlider" type="HSlider" parent="MenuViewport/MenuUI/SettingsBox" unique_id=471114481]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="Label2" type="Label" parent="MenuViewport/MenuUI/SettingsBox" unique_id=1128111156]
+layout_mode = 2
+text = "Efectos de Sonido"
+
+[node name="SFXSlider" type="HSlider" parent="MenuViewport/MenuUI/SettingsBox" unique_id=1067055087]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="Label3" type="Label" parent="MenuViewport/MenuUI/SettingsBox" unique_id=109712760]
+layout_mode = 2
+text = "Música"
+
+[node name="MusicSlider" type="HSlider" parent="MenuViewport/MenuUI/SettingsBox" unique_id=1320196039]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="Label4" type="Label" parent="MenuViewport/MenuUI/SettingsBox" unique_id=196011341]
+layout_mode = 2
+text = "Voces"
+
+[node name="VozSlider" type="HSlider" parent="MenuViewport/MenuUI/SettingsBox" unique_id=1876867529]
+layout_mode = 2
+max_value = 1.0
+step = 0.01
+
+[node name="ModeBox" type="VBoxContainer" parent="MenuViewport/MenuUI" unique_id=190673061]
+layout_mode = 0
+offset_right = 510.0
+offset_bottom = 206.0
+alignment = 1
+
+[node name="Label2" type="Label" parent="MenuViewport/MenuUI/ModeBox" unique_id=547075497]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+text = "THE BLACKJACK SHOW"
+label_settings = SubResource("LabelSettings_m16r1")
+horizontal_alignment = 1
+
+[node name="Label" type="Label" parent="MenuViewport/MenuUI/ModeBox" unique_id=520967383]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_1txdl")
+theme_override_font_sizes/font_size = 20
+text = "¿Que quieres jugar?"
+horizontal_alignment = 1
+
+[node name="SinglePlayerButton" type="Button" parent="MenuViewport/MenuUI/ModeBox" unique_id=1366185488]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_0bjyp")
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxEmpty_m16r1")
+text = "Vs. Dealer"
+icon = ExtResource("5_ju15h")
+flat = true
+icon_alignment = 1
+
+[node name="MultiPlayerButton" type="Button" parent="MenuViewport/MenuUI/ModeBox" unique_id=1441642985]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("5_0bjyp")
+theme_override_font_sizes/font_size = 20
+text = "Multijugador"
+icon = ExtResource("5_ju15h")
+flat = true
+clip_text = true
+icon_alignment = 1
+
+[node name="LobbyBox" type="VBoxContainer" parent="MenuViewport/MenuUI" unique_id=942349779]
+visible = false
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 0
+offset_right = 512.0
+offset_bottom = 512.0
+
+[node name="TitleLabel" type="Label" parent="MenuViewport/MenuUI/LobbyBox" unique_id=163500288]
+layout_mode = 2
+
+[node name="PlayerList" type="VBoxContainer" parent="MenuViewport/MenuUI/LobbyBox" unique_id=1544370994]
+custom_minimum_size = Vector2(512, 50)
+layout_mode = 2
+
+[node name="StartGameButton" type="Button" parent="MenuViewport/MenuUI/LobbyBox" unique_id=441296096]
+custom_minimum_size = Vector2(512, 50)
+layout_mode = 2
+theme = SubResource("Theme_6rlie")
+theme_type_variation = &"FlatButton"
+text = "start"
+
+[node name="PersistentBox" type="HBoxContainer" parent="MenuViewport/MenuUI" unique_id=466127056]
+layout_mode = 0
+offset_top = 400.0
+offset_right = 254.0
+offset_bottom = 440.0
+alignment = 2
+
+[node name="QuitButton" type="Button" parent="MenuViewport/MenuUI/PersistentBox" unique_id=917101439]
+layout_mode = 2
+theme = ExtResource("7_6rlie")
+theme_type_variation = &"FlatButton"
+text = "Salir del Juego"
+
+[node name="SettingsButton" type="Button" parent="MenuViewport/MenuUI/PersistentBox" unique_id=457443003]
+layout_mode = 2
+theme = ExtResource("7_6rlie")
+theme_type_variation = &"FlatButton"
+text = "Configuraciones"
+
+[node name="BackButton" type="Button" parent="MenuViewport/MenuUI/PersistentBox" unique_id=1854986320]
+layout_mode = 2
+theme = ExtResource("7_6rlie")
+theme_type_variation = &"FlatButton"
+text = "Volver"
+
+[node name="SFXPlayer" type="AudioStreamPlayer3D" parent="MenuViewport/MenuUI" unique_id=1309630408]
+stream = ExtResource("15_x147o")
+volume_db = -11.265
+max_distance = 71.03
+bus = &"SFX"
+
+[node name="CanvasLayer" type="CanvasLayer" parent="MenuViewport" unique_id=1475671189]
+process_mode = 4
+physics_interpolation_mode = 2
+layer = 0
+script = ExtResource("3_7ihqj")
+resolution = Vector2(320, 320)
+scan_line_amount = 0.23
+roll_line_amount = 0.057
+
+[node name="SpotLight3D" type="SpotLight3D" parent="." unique_id=80935914]
+transform = Transform3D(0.95732963, 0.2889984, 0, -0.2889984, 0.95732963, 0, 0, 0, 1, 0, 1.0126264, 1.1407329)
+spot_range = 3.0
+spot_angle = 44.78249
+
+[node name="tv60S" parent="." unique_id=1417274689 instance=ExtResource("4_n6o36")]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0.014655203, -0.37483704, -0.79130304)
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="." unique_id=992585521]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08146858, 1.0458441, -1.8795929)
+material_override = SubResource("StandardMaterial3D_1txdl")
+gi_mode = 0
+mesh = SubResource("QuadMesh_0xbyl")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=406134518]
+transform = Transform3D(1, 0, 0, 0, 0.41358116, 0.91046727, 0, -0.91046727, 0.41358116, -0.027676582, 4.193324, 1.6467742)
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=622548076]
+stream = ExtResource("16_4mmxn")
+autoplay = true
+
+[connection signal="pressed" from="MenuViewport/MenuUI/ConnectionBox/HostButton" to="MenuViewport/MenuUI" method="_on_host_pressed"]
+[connection signal="pressed" from="MenuViewport/MenuUI/ConnectionBox/JoinButton" to="MenuViewport/MenuUI" method="_on_join_pressed"]
+[connection signal="pressed" from="MenuViewport/MenuUI/ModeBox/SinglePlayerButton" to="MenuViewport/MenuUI" method="_on_singleplayer_pressed"]
+[connection signal="pressed" from="MenuViewport/MenuUI/ModeBox/MultiPlayerButton" to="MenuViewport/MenuUI" method="_on_multiplayer_pressed"]
+[connection signal="pressed" from="MenuViewport/MenuUI/PersistentBox/QuitButton" to="MenuViewport/MenuUI" method="_on_quit_pressed"]
+[connection signal="pressed" from="MenuViewport/MenuUI/PersistentBox/SettingsButton" to="MenuViewport/MenuUI" method="_on_open_settings_pressed"]
+[connection signal="pressed" from="MenuViewport/MenuUI/PersistentBox/BackButton" to="MenuViewport/MenuUI" method="_on_back_pressed"]
