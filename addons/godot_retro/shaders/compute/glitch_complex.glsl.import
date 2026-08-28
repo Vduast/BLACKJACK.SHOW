@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://blynier1o0ciy"
+path="res://.godot/imported/glitch_complex.glsl-a53da99379a11e61989242a5f31ec64b.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/glitch_complex.glsl"
+dest_files=["res://.godot/imported/glitch_complex.glsl-a53da99379a11e61989242a5f31ec64b.res"]
+
+[params]
+

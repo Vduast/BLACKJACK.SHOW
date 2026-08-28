@@ -72,22 +72,28 @@ func _animate_arm(side: String, target_node: Node3D, rest_pos: Vector3, final_po
 	anim_tree.set(transition_path, anim_move)
 	
 	var tween = create_tween()
-	tween.tween_property(target_node, "global_position", final_pos, 0.4).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	tween.tween_interval(0.1)
-	tween.tween_property(target_node, "global_position", rest_pos, 0.6).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	
+	# 1. Movimiento agresivo y repentino hacia la carta (Casi un "teletransporte" asustadizo)
+	tween.tween_property(target_node, "global_position", final_pos, 0.2).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	
+	# 2. Pausa antinatural, se queda "congelado" un instante más largo para generar tensión
+	tween.tween_interval(0.25)
+	
+	# 3. Regresa con un efecto elástico. Esto hará que la mano "tiemble" un poco al llegar a su posición de descanso.
+	tween.tween_property(target_node, "global_position", rest_pos, 0.8).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	
 	tween.tween_callback(func(): anim_tree.set(transition_path, anim_idle))
 
 func speak(is_active: bool):
 	var value = 1.0 if is_active else 0.0
 	var tween = create_tween()
-	tween.tween_property(anim_tree, "parameters/MezclarHablar/blend_amount", value, 0.2)
+	# Transición un poco más errática para el inicio del habla
+	tween.tween_property(anim_tree, "parameters/MezclarHablar/blend_amount", value, 0.15).set_trans(Tween.TRANS_BOUNCE)
 
 # --- LOOK CONTROL ---
 func look_at_target(target: Node3D):
 	# We look for the active camera in the scene (the player's eyes)
 	var camera = get_viewport().get_camera_3d()
-	
-	# If the camera exists, the target will be the camera; if not, it will be the original target
 	var real_target = camera if is_instance_valid(camera) else target
 	
 	if look_target == real_target: 
@@ -97,9 +103,11 @@ func look_at_target(target: Node3D):
 	
 	if look_weight < 1.0:
 		var tween = create_tween()
-		tween.tween_property(self, "look_weight", 1.0, 0.5).set_trans(Tween.TRANS_SINE) 
+		# "Cuello Roto": El dealer hace un snap rapidísimo hacia tu cámara en lugar de girar lentamente.
+		tween.tween_property(self, "look_weight", 1.0, 0.2).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT) 
 
 func stop_looking():
 	var tween = create_tween()
-	tween.tween_property(self, "look_weight", 0.0, 0.5).set_trans(Tween.TRANS_SINE)
+	# Deja de mirar de manera muy lenta y pesada, como si le costara volver a la normalidad
+	tween.tween_property(self, "look_weight", 0.0, 1.2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_callback(func(): look_target = null)

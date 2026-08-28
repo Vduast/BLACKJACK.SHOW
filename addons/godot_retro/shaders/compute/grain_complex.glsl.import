@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://cp88ddc4s1onq"
+path="res://.godot/imported/grain_complex.glsl-3103653bf793cd42fa4a9799a4e449f8.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/grain_complex.glsl"
+dest_files=["res://.godot/imported/grain_complex.glsl-3103653bf793cd42fa4a9799a4e449f8.res"]
+
+[params]
+

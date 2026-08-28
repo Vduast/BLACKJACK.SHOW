@@ -1,0 +1,288 @@
+[gd_scene format=3 uid="uid://dwddwbxre45jp"]
+
+[ext_resource type="Script" uid="uid://bdsmigh4b2o11" path="res://addons/godot_retro/effects/compositor/lens_distortion_effect.gd" id="1_3r0u2"]
+[ext_resource type="PackedScene" uid="uid://bhncot7hfcewb" path="res://addons/godot_retro/samples/common/map2_city/mdl_city_view.tscn" id="1_tdf4o"]
+[ext_resource type="Script" uid="uid://jrdqa7u22v0m" path="res://addons/godot_retro/effects/compositor/grain_simple_effect.gd" id="2_ql3xm"]
+[ext_resource type="Texture2D" uid="uid://xbvqsx6764cv" path="res://addons/godot_retro/samples/common/map2_city/tex_light_ray.png" id="2_u1c53"]
+[ext_resource type="Script" uid="uid://dyr7lt5jptcaq" path="res://addons/godot_retro/effects/compositor/tv_effect.gd" id="3_tdf4o"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2ipf8"]
+
+[sub_resource type="Sky" id="4"]
+sky_material = SubResource("ProceduralSkyMaterial_2ipf8")
+
+[sub_resource type="Environment" id="5"]
+background_mode = 1
+sky = SubResource("4")
+ambient_light_source = 2
+ambient_light_color = Color(0.20470095, 0.204701, 2.4065375e-08, 1)
+ambient_light_sky_contribution = 0.0
+glow_enabled = true
+glow_intensity = 2.0
+glow_bloom = 0.1
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0, 0, 0, 1)
+fog_density = 0.0
+fog_height = 3.0
+fog_height_density = 1.0
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_6jln8"]
+exposure_multiplier = 2.0
+dof_blur_far_distance = 30.0
+dof_blur_far_transition = 30.0
+dof_blur_amount = 0.05
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_ql3xm"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("1_3r0u2")
+strength = 0.05
+metadata/_custom_type_script = "uid://bdsmigh4b2o11"
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_54avw"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("2_ql3xm")
+metadata/_custom_type_script = "uid://jrdqa7u22v0m"
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_u1c53"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("3_tdf4o")
+scalines_opt = 0.1
+rgb_offset_opt = 0.2
+metadata/_custom_type_script = "uid://dyr7lt5jptcaq"
+
+[sub_resource type="Compositor" id="Compositor_ucufk"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_ql3xm"), SubResource("CompositorEffect_54avw"), SubResource("CompositorEffect_u1c53")])
+
+[sub_resource type="Animation" id="6"]
+resource_name = "Camera3D"
+length = 17.0
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../View/Camera3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 7),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(17, 18, -18.81), Vector3(5.221, 18, -29.249)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../View/Camera3D:current")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 7),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../View/Camera2:current")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 7, 12),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [false, true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../View/Camera2:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 7, 12),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(5.221, 13.306, -29.249), Vector3(8.442829, 13.306, -29.249), Vector3(16.496, 13.306, -29.249)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("../View/Camera3:current")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 12),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("../View/Camera3:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 17),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(9.202, 27.291, -26.919), Vector3(9.202, 27.291, -43.155)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("../View/Camera3:rotation_degrees")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(12),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(-90, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_5k71e"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("../View/Camera2:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(8.442829, 13.306, -29.249)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_g8ri0"]
+_data = {
+&"Camera3D": SubResource("6"),
+&"RESET": SubResource("Animation_5k71e")
+}
+
+[node name="Map2" type="Node3D" unique_id=1164430390]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1298560484]
+environment = SubResource("5")
+camera_attributes = SubResource("CameraAttributesPractical_6jln8")
+compositor = SubResource("Compositor_ucufk")
+
+[node name="Map" type="Node3D" parent="." unique_id=940776379]
+
+[node name="Buildings" type="Node3D" parent="Map" unique_id=513701010]
+
+[node name="mdlCityView" parent="Map/Buildings" unique_id=706471087 instance=ExtResource("1_tdf4o")]
+skeleton = NodePath("../..")
+
+[node name="mdlCityView2" parent="Map/Buildings" unique_id=74165923 instance=ExtResource("1_tdf4o")]
+transform = Transform3D(100, 0, 0, 0, -4.371139e-06, 100, 0, -100, -4.371139e-06, 32, 0, 4)
+skeleton = NodePath("../..")
+
+[node name="mdlCityView3" parent="Map/Buildings" unique_id=237364274 instance=ExtResource("1_tdf4o")]
+transform = Transform3D(100, 0, 0, 0, -4.371139e-06, 100, 0, -100, -4.371139e-06, -31, 0, -3)
+skeleton = NodePath("../..")
+
+[node name="mdlCityView4" parent="Map/Buildings" unique_id=6917723 instance=ExtResource("1_tdf4o")]
+transform = Transform3D(100, 0, 0, 0, -4.371139e-06, 100, 0, -100, -4.371139e-06, 0, 0, 28)
+skeleton = NodePath("../..")
+
+[node name="mdlCityView5" parent="Map/Buildings" unique_id=687885597 instance=ExtResource("1_tdf4o")]
+transform = Transform3D(100, 0, 0, 0, -4.371139e-06, 100, 0, -100, -4.371139e-06, 32, 0, 32)
+skeleton = NodePath("../..")
+
+[node name="mdlCityView6" parent="Map/Buildings" unique_id=1500174663 instance=ExtResource("1_tdf4o")]
+transform = Transform3D(100, 0, 0, 0, -4.371139e-06, 100, 0, -100, -4.371139e-06, -31, 0, 25)
+skeleton = NodePath("../..")
+
+[node name="mdlCityView7" parent="Map/Buildings" unique_id=287198559 instance=ExtResource("1_tdf4o")]
+transform = Transform3D(100, 0, 0, 0, -4.371139e-06, 100, 0, -100, -4.371139e-06, 0, 0, 57)
+skeleton = NodePath("../..")
+
+[node name="mdlCityView8" parent="Map/Buildings" unique_id=1605786309 instance=ExtResource("1_tdf4o")]
+transform = Transform3D(100, 0, 0, 0, -4.371139e-06, 100, 0, -100, -4.371139e-06, 32, 0, 61)
+skeleton = NodePath("../..")
+
+[node name="mdlCityView9" parent="Map/Buildings" unique_id=1144773721 instance=ExtResource("1_tdf4o")]
+transform = Transform3D(100, 0, 0, 0, -4.371139e-06, 100, 0, -100, -4.371139e-06, -31, 0, 54)
+skeleton = NodePath("../..")
+
+[node name="Lights" type="Node3D" parent="Map" unique_id=2124128585]
+
+[node name="Sprite3D" type="Sprite3D" parent="Map/Lights" unique_id=1720676101]
+transform = Transform3D(-70.71068, -70.71066, 3.0908616e-06, -4.371138e-06, 7.12149e-13, -99.999985, 70.710655, -70.710686, -3.0908616e-06, -9.076, 12.838, -13.559)
+modulate = Color(0.98039216, 0.8509804, 0.5411765, 0.019607844)
+pixel_size = 0.0004
+axis = 1
+texture = ExtResource("2_u1c53")
+
+[node name="Sprite3D2" type="Sprite3D" parent="Map/Lights" unique_id=291816713]
+transform = Transform3D(-70.71068, -70.71066, 3.0908616e-06, -4.371138e-06, 7.12149e-13, -99.999985, 70.710655, -70.710686, -3.0908616e-06, -23.076, 15.133, 2.441)
+modulate = Color(0.98039216, 0.8509804, 0.5411765, 0.019607844)
+pixel_size = 0.0004
+axis = 1
+texture = ExtResource("2_u1c53")
+
+[node name="Sprite3D3" type="Sprite3D" parent="Map/Lights" unique_id=1003494307]
+transform = Transform3D(-70.71068, -70.71066, 3.0908616e-06, -4.371138e-06, 7.12149e-13, -99.999985, 70.710655, -70.710686, -3.0908616e-06, 26.924358, 16.823498, -8.558533)
+modulate = Color(0.98039216, 0.8509804, 0.5411765, 0.019607844)
+pixel_size = 0.0004
+axis = 1
+texture = ExtResource("2_u1c53")
+
+[node name="Sprite3D4" type="Sprite3D" parent="Map/Lights" unique_id=28617202]
+transform = Transform3D(-70.71068, -70.71066, 3.0908616e-06, -4.371138e-06, 7.12149e-13, -99.999985, 70.710655, -70.710686, -3.0908616e-06, -18.075642, 13.823498, 34.441467)
+modulate = Color(0.98039216, 0.8509804, 0.5411765, 0.019607844)
+pixel_size = 0.0004
+axis = 1
+texture = ExtResource("2_u1c53")
+
+[node name="Sprite3D5" type="Sprite3D" parent="Map/Lights" unique_id=1156773950]
+transform = Transform3D(-70.71068, -70.71066, 3.0908616e-06, -4.371138e-06, 7.12149e-13, -99.999985, 70.710655, -70.710686, -3.0908616e-06, 23.924358, 13.823498, 43.441467)
+modulate = Color(0.98039216, 0.8509804, 0.5411765, 0.019607844)
+pixel_size = 0.0004
+axis = 1
+texture = ExtResource("2_u1c53")
+
+[node name="Sprite3D6" type="Sprite3D" parent="Map/Lights" unique_id=330091279]
+transform = Transform3D(-70.71068, -70.71066, 3.0908616e-06, -4.371138e-06, 7.12149e-13, -99.999985, 70.710655, -70.710686, -3.0908616e-06, 22.924, 11.128, 19.441)
+modulate = Color(0.98039216, 0.8509804, 0.5411765, 0.019607844)
+pixel_size = 0.0004
+axis = 1
+texture = ExtResource("2_u1c53")
+
+[node name="View" type="Node3D" parent="." unique_id=571127349]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 64)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="View" unique_id=670419511]
+libraries/ = SubResource("AnimationLibrary_g8ri0")
+autoplay = &"Camera3D"
+
+[node name="Camera3D" type="Camera3D" parent="View" unique_id=904400498]
+transform = Transform3D(0.642788, -0.21115, 0.736369, 0, 0.961262, 0.275637, -0.766044, -0.177176, 0.617888, 17, 18, -18.81)
+current = true
+
+[node name="Camera2" type="Camera3D" parent="View" unique_id=1949346160]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.442829, 13.306, -29.249)
+
+[node name="Camera3" type="Camera3D" parent="View" unique_id=275951900]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 9.202, 27.291, -26.919)

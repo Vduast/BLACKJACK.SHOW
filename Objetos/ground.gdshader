@@ -1,70 +1,112 @@
 shader_type spatial;
 
-// Modos para asegurar que sea mate y visible por ambos lados
-render_mode blend_mix, depth_draw_opaque, cull_disabled, diffuse_burley, specular_disabled;
+// Reactivamos specular_schlick_ggx para poder hacer el efecto "pelusa" (fuzz)
+render_mode blend_mix, depth_draw_opaque, cull_disabled, diffuse_burley, specular_schlick_ggx;
 
-// Paleta Retro "Mid-Century Modern" por defecto
+// --- COLORES RETRO ---
 uniform vec4 color_1 : source_color = vec4(0.8, 0.25, 0.1, 1.0);  // Rojo Ladrillo
 uniform vec4 color_2 : source_color = vec4(0.15, 0.35, 0.4, 1.0); // Azul Petróleo
 uniform vec4 color_3 : source_color = vec4(0.9, 0.85, 0.7, 1.0);  // Crema/Hueso
+uniform vec4 color_dirt : source_color = vec4(0.2, 0.15, 0.1, 1.0); // Color de la mugre
 
-// Parametros del volumen de la alfombra
+// --- PARÁMETROS DE LA ALFOMBRA ---
 uniform sampler2D fiber_noise_texture : hint_normal;
 uniform float fiber_scale = 50.0;
-uniform float fiber_depth : hint_range(0.0, 2.0) = 1.0;
-
-// Escala del patrón
+uniform float fiber_depth : hint_range(0.0, 5.0) = 2.0;
 uniform float pattern_scale = 2.0;
+
+// --- EFECTOS REALISTAS ---
+uniform float ao_strength : hint_range(0.0, 1.0) = 0.7;    // Profundidad de las sombras de las fibras
+uniform float fuzz_strength : hint_range(0.0, 1.0) = 0.35; // Brillo/Pelusa en los bordes
+uniform float dirt_amount : hint_range(0.0, 1.0) = 0.3;    // Cantidad de mugre
 
 varying vec3 world_pos;
 
+// 1. Funciones de Ruido Procedural (Para la mugre)
+float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
+               mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+}
+
+// Fractal Brownian Motion para hacer la mugre más natural
+float fbm(vec2 p) {
+    float v = 0.0; float a = 0.5;
+    for (int i = 0; i < 3; i++) {
+        v += a * noise(p);
+        p *= 2.0;
+        a *= 0.5;
+    }
+    return v;
+}
+
 void vertex() {
-    // Tomamos la posición real en el mundo (solo en el eje XZ para suelos)
     world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 }
 
 void fragment() {
-    // 1. GENERACIÓN DE LA CUADRÍCULA
+    // 1. GENERACIÓN DEL PATRÓN (Misma matemática, es perfecta)
     vec2 uv = world_pos.xz * pattern_scale;
-    vec2 grid_id = floor(uv);       // Identificador de cada celda (0,0), (0,1)...
-    vec2 grid_uv = fract(uv) - 0.5; // Coordenadas dentro de la celda (-0.5 a 0.5)
+    vec2 grid_id = floor(uv);       
+    vec2 grid_uv = fract(uv) - 0.5; 
 
-    // 2. MATEMÁTICA DEL PATRÓN "MOD"
-    // 'checker' alterna entre 0 y 1 como un tablero de ajedrez
     float checker = mod(grid_id.x + grid_id.y, 2.0);
-    
-    // Distancia desde el centro para hacer los anillos
     float dist = length(grid_uv);
     
-    // Anillo exterior y círculo interior
     float mask_outer = smoothstep(0.48, 0.45, dist);
     float mask_inner = smoothstep(0.22, 0.18, dist);
 
-    vec3 out_color;
-    
-    // 3. ALTERNAMOS COLORES SEGÚN LA CELDA
+    vec3 base_color;
     if (checker < 0.5) {
-        // Celdas pares: Fondo crema, aro exterior rojo, centro azul
-        out_color = mix(color_3.rgb, color_1.rgb, mask_outer);
-        out_color = mix(out_color, color_2.rgb, mask_inner);
+        base_color = mix(color_3.rgb, color_1.rgb, mask_outer);
+        base_color = mix(base_color, color_2.rgb, mask_inner);
     } else {
-        // Celdas impares: Fondo rojo, aro exterior azul, centro crema
-        out_color = mix(color_1.rgb, color_2.rgb, mask_outer);
-        out_color = mix(out_color, color_3.rgb, mask_inner);
+        base_color = mix(color_1.rgb, color_2.rgb, mask_outer);
+        base_color = mix(base_color, color_3.rgb, mask_inner);
     }
 
-    // 4. SIMULACIÓN DE TEXTURA DE FIBRA (ALFOMBRA)
+    // 2. LECTURA DE FIBRAS (Textura Normal)
     vec2 fiber_uv = world_pos.xz * fiber_scale;
-    vec3 noise_raw = texture(fiber_noise_texture, fiber_uv).rgb;
-    vec3 fiber_normal = (noise_raw - 0.5) * fiber_depth;
+    vec4 normal_tex = texture(fiber_noise_texture, fiber_uv);
+    
+    // 3. FAKE AO (Oclusión Ambiental)
+    // Usamos el canal rojo de la textura normal para simular la altura de los hilos.
+    // Oscurecemos el color base donde los hilos son profundos, dando sensación de alfombra gruesa.
+    float fiber_height = normal_tex.r;
+    float fake_ao = mix(1.0, fiber_height, ao_strength);
+    base_color *= fake_ao;
 
-    // 5. PROTECCIÓN DE LUZ PARA QUADMESH
+    // 4. MUGRE (Liminal / Backrooms Grime)
+    // Generamos manchas gigantes orgánicas en el suelo
+    float dirt_noise = fbm(world_pos.xz * 1.5);
+    base_color = mix(base_color, color_dirt.rgb, dirt_noise * dirt_amount);
+
+    // 5. PELUSA / FRESNEL (El toque mágico)
+    // Calculamos el ángulo en el que la cámara mira al suelo. 
+    // Las alfombras se ven ligeramente más claras a lo lejos porque ves el lateral de los hilos.
+    float fresnel = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), 3.0);
+    base_color += base_color * fresnel * fuzz_strength;
+
+    // 6. PROTECCIÓN DE LUZ
     if (!FRONT_FACING) {
         NORMAL = -NORMAL;
     }
 
-    // Aplicar resultados
-    ALBEDO = out_color;
-    NORMAL = normalize(NORMAL + fiber_normal);
-    ROUGHNESS = 0.95; 
+    // --- APLICACIÓN AL MOTOR ---
+    ALBEDO = base_color;
+    
+    // TRUCO: Usar NORMAL_MAP y NORMAL_MAP_DEPTH hace que Godot calcule la iluminación 3D 
+    // de la textura muchísimo mejor que sumando la normal a mano.
+    NORMAL_MAP = normal_tex.rgb;
+    NORMAL_MAP_DEPTH = fiber_depth;
+    
+    // La alfombra es muy mate, pero en los bordes (fresnel) la hacemos sutilmente suave
+    ROUGHNESS = clamp(0.95 - (fresnel * 0.2), 0.0, 1.0); 
+    SPECULAR = 0.1; // Reflejo mínimo de luz
 }

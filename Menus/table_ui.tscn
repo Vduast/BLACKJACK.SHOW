@@ -337,12 +337,12 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_qnct1")
 text = "Limpiar Mesa"
 
 [node name="JokersContainer" type="HBoxContainer" parent="UI" unique_id=881657758]
-layout_direction = 3
 layout_mode = 0
 offset_left = 47.0
 offset_top = 772.0
 offset_right = 115.0
 offset_bottom = 1020.0
+layout_direction = 3
 
 [node name="GamePanel" type="HBoxContainer" parent="UI" unique_id=1283694832]
 layout_mode = 1
@@ -503,10 +503,10 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_4768y")
 theme_override_styles/hover = SubResource("StyleBoxFlat_qqhqe")
 text = "USAR"
 
-[connection signal="pressed" from="UI/OpenMenuButton" to="." method="open_menu_button_pressed"]
 [connection signal="pressed" from="UI/OpenMenuButton" to="." method="_on_open_menu_pressed"]
-[connection signal="pressed" from="UI/OpenMenuButton2" to="." method="open_menu_button_pressed"]
+[connection signal="pressed" from="UI/OpenMenuButton" to="." method="open_menu_button_pressed"]
 [connection signal="pressed" from="UI/OpenMenuButton2" to="." method="_on_open_menu_pressed"]
+[connection signal="pressed" from="UI/OpenMenuButton2" to="." method="open_menu_button_pressed"]
 [connection signal="pressed" from="UI/StartButton" to="." method="start_button_pressed"]
 [connection signal="pressed" from="UI/OverlayMenu/PauseBox/ContinueButton" to="." method="_on_continue_pressed"]
 [connection signal="pressed" from="UI/OverlayMenu/PauseBox/SettingsButton" to="." method="_on_settings_pressed"]

@@ -1,0 +1,423 @@
+[gd_scene format=3 uid="uid://drmyjetugsrww"]
+
+[ext_resource type="Texture2D" uid="uid://bgew2irwkfjbw" path="res://addons/godot_retro/samples/common/map4_2d/tex_sky.jpg" id="1_fsc81"]
+[ext_resource type="Texture2D" uid="uid://bhvtsti1x4iwj" path="res://addons/godot_retro/samples/common/map4_2d/tex_grass.png" id="2_ndh7n"]
+[ext_resource type="Texture2D" uid="uid://cc3kf1crpylrl" path="res://addons/godot_retro/samples/common/map4_2d/tex_house3.png" id="3_on1v7"]
+[ext_resource type="Texture2D" uid="uid://s3tvm6ginefv" path="res://addons/godot_retro/samples/common/map4_2d/tex_house2.png" id="4_h8b3k"]
+[ext_resource type="Texture2D" uid="uid://d2wrwrymsjp80" path="res://addons/godot_retro/samples/common/map4_2d/tex_house1.png" id="5_5a2mq"]
+[ext_resource type="Texture2D" uid="uid://cobql1qsppwex" path="res://addons/godot_retro/samples/common/map4_2d/tex_flower2.png" id="6_l4adh"]
+[ext_resource type="Texture2D" uid="uid://b5cr3w3qbpk1c" path="res://addons/godot_retro/samples/common/map4_2d/tex_flower1.png" id="7_m4rgj"]
+[ext_resource type="Shader" uid="uid://br42f24g55y3f" path="res://addons/godot_retro/samples/common/map4_2d/shr_wind.gdshader" id="8_mh1mh"]
+[ext_resource type="Texture2D" uid="uid://dehd38sccaemp" path="res://addons/godot_retro/samples/common/map4_2d/tex_tree.png" id="9_p7i46"]
+[ext_resource type="Script" uid="uid://d3k7hopxxuhax" path="res://addons/godot_retro/samples/common/map4_2d/scr_player.gd" id="10_fgfyl"]
+[ext_resource type="Texture2D" uid="uid://c8i1slgoqk2c0" path="res://addons/godot_retro/samples/common/map4_2d/player/idle.png" id="11_nl0cx"]
+[ext_resource type="Texture2D" uid="uid://bso8pxq8ppvig" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0001.png" id="12_2hom3"]
+[ext_resource type="Texture2D" uid="uid://ocmffcovmqie" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0002.png" id="13_5hdhm"]
+[ext_resource type="Texture2D" uid="uid://w8cr0e0c5ehr" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0003.png" id="14_7uy8g"]
+[ext_resource type="Texture2D" uid="uid://dguy5ehwsbsj6" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0004.png" id="15_n4io4"]
+[ext_resource type="Texture2D" uid="uid://b31tahtgspdu" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0005.png" id="16_ml78b"]
+[ext_resource type="Texture2D" uid="uid://d2j86sq6r81rg" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0006.png" id="17_hwb61"]
+[ext_resource type="Texture2D" uid="uid://smcqhnmtqn6r" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0007.png" id="18_tgs3d"]
+[ext_resource type="Texture2D" uid="uid://drqbkupo8lxa" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0008.png" id="19_0gvo1"]
+[ext_resource type="Texture2D" uid="uid://kidgxmtavi3u" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0009.png" id="20_1hb5g"]
+[ext_resource type="Texture2D" uid="uid://c6nik0lvhtqch" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0010.png" id="21_kjb34"]
+[ext_resource type="Texture2D" uid="uid://h850jy4t3epm" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0011.png" id="22_nuyfd"]
+[ext_resource type="Texture2D" uid="uid://bwyrjqsbts8ql" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0012.png" id="23_rgd3u"]
+[ext_resource type="Texture2D" uid="uid://dypa8aj26hm4d" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0013.png" id="24_nhjl1"]
+[ext_resource type="Texture2D" uid="uid://dct40hrvihm3s" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0014.png" id="25_nrdny"]
+[ext_resource type="Texture2D" uid="uid://crayj7hu5hv3r" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0015.png" id="26_lgigf"]
+[ext_resource type="Texture2D" uid="uid://bl50asvwtwmyo" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0016.png" id="27_qirrr"]
+[ext_resource type="Texture2D" uid="uid://klp3kr5et4qs" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0017.png" id="28_lbnmo"]
+[ext_resource type="Texture2D" uid="uid://cqmwu27gjjtix" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0018.png" id="29_mhl6w"]
+[ext_resource type="Texture2D" uid="uid://4ladb30igijn" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0019.png" id="30_3qbev"]
+[ext_resource type="Texture2D" uid="uid://hcd66ujfb4qd" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0020.png" id="31_d2pwu"]
+[ext_resource type="Texture2D" uid="uid://b70au1rymkiee" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0021.png" id="32_nt08b"]
+[ext_resource type="Texture2D" uid="uid://j5xu2p0rajv5" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0022.png" id="33_0hfm7"]
+[ext_resource type="Texture2D" uid="uid://ga2ho13y2lbw" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0023.png" id="34_0bjec"]
+[ext_resource type="Texture2D" uid="uid://u56vgp6l28t4" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0024.png" id="35_8nmw1"]
+[ext_resource type="Texture2D" uid="uid://dcwcyukypgaxx" path="res://addons/godot_retro/samples/common/map4_2d/player/walking/0025.png" id="36_uwnpo"]
+[ext_resource type="Shader" uid="uid://d35fvyqhp2lv7" path="res://addons/godot_retro/shaders/standard/posterization_complex.gdshader" id="37_ajmg8"]
+[ext_resource type="Shader" uid="uid://bq88b1jl0xavf" path="res://addons/godot_retro/shaders/standard/color_correction.gdshader" id="38_c8t6u"]
+[ext_resource type="Texture2D" uid="uid://d0qxblmwkuobc" path="res://addons/godot_retro/samples/common/map4_2d/tex_sun.jpg" id="39_w7yyf"]
+
+[sub_resource type="ShaderMaterial" id="1"]
+shader = ExtResource("8_mh1mh")
+shader_parameter/speed = 2.0
+shader_parameter/minStrength = 0.0
+shader_parameter/maxStrength = 0.3
+shader_parameter/strengthScale = 100.0
+shader_parameter/interval = 2.0
+shader_parameter/detail = 1.0
+shader_parameter/distortion = 0.7
+shader_parameter/heightOffset = 0.0
+
+[sub_resource type="RectangleShape2D" id="2"]
+size = Vector2(10, 60)
+
+[sub_resource type="SpriteFrames" id="3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("11_nl0cx")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("12_2hom3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_5hdhm")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_7uy8g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_n4io4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_ml78b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_hwb61")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_tgs3d")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19_0gvo1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_1hb5g")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_kjb34")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22_nuyfd")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_rgd3u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_nhjl1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_nrdny")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_lgigf")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_qirrr")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28_lbnmo")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_mhl6w")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30_3qbev")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_d2pwu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_nt08b")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_0hfm7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_0bjec")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_8nmw1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_uwnpo")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 24.0
+}]
+
+[sub_resource type="RectangleShape2D" id="4"]
+size = Vector2(10, 40)
+
+[sub_resource type="ShaderMaterial" id="5"]
+shader = ExtResource("37_ajmg8")
+shader_parameter/color_depth = 14.0
+shader_parameter/color_number = 7.8
+
+[sub_resource type="ShaderMaterial" id="6"]
+shader = ExtResource("38_c8t6u")
+shader_parameter/Shadows = Color(0.203922, 0, 0.184314, 1)
+shader_parameter/Midtones = Color(0.0666667, 0.0705882, 0, 1)
+shader_parameter/Hilights = Color(0.027451, 0, 0.164706, 1)
+
+[sub_resource type="CanvasItemMaterial" id="7"]
+blend_mode = 1
+light_mode = 1
+
+[node name="Map4" type="Node2D" unique_id=1283006161]
+
+[node name="Map" type="Node2D" parent="." unique_id=1908398790]
+
+[node name="Sky" type="ParallaxBackground" parent="Map" unique_id=1369652950]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="Map/Sky" unique_id=831713711]
+motion_scale = Vector2(0.5, 1)
+
+[node name="bg" type="Sprite2D" parent="Map/Sky/ParallaxLayer" unique_id=267502713]
+texture_filter = 1
+position = Vector2(-80.6382, -182.228)
+scale = Vector2(0.913784, 0.913784)
+texture = ExtResource("1_fsc81")
+centered = false
+
+[node name="Grass" type="Node2D" parent="Map" unique_id=1381633307]
+
+[node name="texGrass" type="Sprite2D" parent="Map/Grass" unique_id=1813744397]
+z_index = -2
+texture_filter = 1
+position = Vector2(-200.455, 122.621)
+texture = ExtResource("2_ndh7n")
+centered = false
+
+[node name="texGrass2" type="Sprite2D" parent="Map/Grass" unique_id=2137356874]
+z_index = -2
+texture_filter = 1
+position = Vector2(311.545, 122.621)
+texture = ExtResource("2_ndh7n")
+centered = false
+
+[node name="texGrass3" type="Sprite2D" parent="Map/Grass" unique_id=354090988]
+z_index = -2
+texture_filter = 1
+position = Vector2(823.545, 122.621)
+texture = ExtResource("2_ndh7n")
+centered = false
+
+[node name="Houses" type="Node2D" parent="Map" unique_id=1345306237]
+
+[node name="texHouse3" type="Sprite2D" parent="Map/Houses" unique_id=1393033955]
+modulate = Color(1, 0.929412, 0.988235, 1)
+texture_filter = 1
+position = Vector2(252.297, 50.9613)
+scale = Vector2(0.266196, 0.266196)
+texture = ExtResource("3_on1v7")
+
+[node name="texHouse2" type="Sprite2D" parent="Map/Houses" unique_id=1471791389]
+modulate = Color(1, 0.945098, 0.996078, 1)
+texture_filter = 1
+position = Vector2(632.839, 59.3399)
+scale = Vector2(0.383851, 0.383851)
+texture = ExtResource("4_h8b3k")
+
+[node name="texHouse1" type="Sprite2D" parent="Map/Houses" unique_id=168240556]
+modulate = Color(0.988235, 0.807843, 1, 1)
+texture_filter = 1
+position = Vector2(977.126, 122.621)
+scale = Vector2(0.326414, 0.326414)
+texture = ExtResource("5_5a2mq")
+
+[node name="Flowers" type="Node2D" parent="Map" unique_id=345919018]
+
+[node name="texFlower2" type="Sprite2D" parent="Map/Flowers" unique_id=529850812]
+texture_filter = 1
+position = Vector2(141.553, 170.938)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("6_l4adh")
+
+[node name="texFlower8" type="Sprite2D" parent="Map/Flowers" unique_id=1091955685]
+texture_filter = 1
+position = Vector2(261.897, 226.397)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("6_l4adh")
+
+[node name="texFlower9" type="Sprite2D" parent="Map/Flowers" unique_id=42179993]
+texture_filter = 1
+position = Vector2(521.935, 172.003)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("6_l4adh")
+
+[node name="texFlower10" type="Sprite2D" parent="Map/Flowers" unique_id=1945140098]
+texture_filter = 1
+position = Vector2(713.069, 226.397)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("6_l4adh")
+
+[node name="texFlower11" type="Sprite2D" parent="Map/Flowers" unique_id=880462624]
+texture_filter = 1
+position = Vector2(862.201, 204.797)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("6_l4adh")
+
+[node name="texFlower1" type="Sprite2D" parent="Map/Flowers" unique_id=680650911]
+texture_filter = 1
+position = Vector2(174.589, 211.997)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("7_m4rgj")
+
+[node name="texFlower12" type="Sprite2D" parent="Map/Flowers" unique_id=534042766]
+texture_filter = 1
+position = Vector2(13.1862, 193.873)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("7_m4rgj")
+
+[node name="texFlower3" type="Sprite2D" parent="Map/Flowers" unique_id=623950681]
+texture_filter = 1
+position = Vector2(311.545, 186.673)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("7_m4rgj")
+
+[node name="texFlower4" type="Sprite2D" parent="Map/Flowers" unique_id=274447041]
+texture_filter = 1
+position = Vector2(477.667, 219.197)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("7_m4rgj")
+
+[node name="texFlower5" type="Sprite2D" parent="Map/Flowers" unique_id=2003121156]
+texture_filter = 1
+position = Vector2(624.439, 211.997)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("7_m4rgj")
+
+[node name="texFlower6" type="Sprite2D" parent="Map/Flowers" unique_id=1718652532]
+texture_filter = 1
+position = Vector2(757.526, 164.803)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("7_m4rgj")
+
+[node name="texFlower7" type="Sprite2D" parent="Map/Flowers" unique_id=1409506343]
+texture_filter = 1
+position = Vector2(1013.79, 219.197)
+scale = Vector2(0.15, 0.15)
+texture = ExtResource("7_m4rgj")
+
+[node name="Trees" type="Node2D" parent="Map" unique_id=406182040]
+
+[node name="texTree" type="Sprite2D" parent="Map/Trees" unique_id=496550680]
+z_index = -1
+texture_filter = 1
+material = SubResource("1")
+position = Vector2(810.464, 52.1605)
+scale = Vector2(0.610084, 0.610084)
+texture = ExtResource("9_p7i46")
+
+[node name="texTree2" type="Sprite2D" parent="Map/Trees" unique_id=221546906]
+z_index = -1
+texture_filter = 1
+material = SubResource("1")
+position = Vector2(445.302, 49.8023)
+scale = Vector2(0.610084, 0.610084)
+texture = ExtResource("9_p7i46")
+
+[node name="texTree3" type="Sprite2D" parent="Map/Trees" unique_id=543362369]
+texture_filter = 1
+material = SubResource("1")
+position = Vector2(51.6568, 67.6202)
+scale = Vector2(0.610084, 0.610084)
+texture = ExtResource("9_p7i46")
+
+[node name="texTree4" type="Sprite2D" parent="Map/Trees" unique_id=782519563]
+texture_filter = 1
+material = SubResource("1")
+position = Vector2(1164.24, 67.6202)
+scale = Vector2(0.610084, 0.610084)
+texture = ExtResource("9_p7i46")
+
+[node name="Collision" type="Node2D" parent="Map" unique_id=1198177579]
+
+[node name="ends" type="StaticBody2D" parent="Map/Collision" unique_id=1933891673]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Map/Collision/ends" unique_id=386184563]
+position = Vector2(0, 180)
+shape = SubResource("2")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Map/Collision/ends" unique_id=2125927303]
+position = Vector2(1120.78, 179.473)
+shape = SubResource("2")
+
+[node name="Player2" type="CharacterBody2D" parent="." unique_id=177365413]
+position = Vector2(51.6568, 180.673)
+script = ExtResource("10_fgfyl")
+
+[node name="sprPlayer" type="AnimatedSprite2D" parent="Player2" unique_id=341967476]
+texture_filter = 1
+scale = Vector2(0.215045, 0.215045)
+sprite_frames = SubResource("3")
+animation = &"idle"
+flip_h = true
+
+[node name="colPlaer" type="CollisionShape2D" parent="Player2" unique_id=721042499]
+position = Vector2(0, 6)
+shape = SubResource("4")
+
+[node name="camPlayer" type="Camera2D" parent="Player2" unique_id=1480633394]
+limit_left = 0
+limit_top = 0
+limit_right = 1120
+limit_bottom = 240
+limit_smoothed = true
+position_smoothing_enabled = true
+editor_draw_limits = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=862511637]
+layer = 0
+
+[node name="Effects" type="Control" parent="CanvasLayer" unique_id=1599185117]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="CanvasLayer/Effects" unique_id=1901833365]
+z_index = 3
+position = Vector2(159.972, 120)
+scale = Vector2(1.59973, 1.2)
+copy_mode = 2
+
+[node name="JpegCompression" type="ColorRect" parent="CanvasLayer/Effects/BackBufferCopy" unique_id=1804497554]
+material = SubResource("5")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -100.0
+
+[node name="BackBufferCopy2" type="BackBufferCopy" parent="CanvasLayer/Effects" unique_id=536047805]
+z_index = 3
+position = Vector2(159.972, 120)
+scale = Vector2(1.59973, 1.2)
+copy_mode = 2
+
+[node name="CC" type="ColorRect" parent="CanvasLayer/Effects/BackBufferCopy2" unique_id=1230326438]
+material = SubResource("6")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -100.0
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="." unique_id=771644841]
+
+[node name="texSun" type="Sprite2D" parent="CanvasLayer2" unique_id=131891007]
+modulate = Color(1, 1, 1, 0.333333)
+texture_filter = 1
+material = SubResource("7")
+position = Vector2(-77.548, 0)
+scale = Vector2(0.649498, 0.653951)
+texture = ExtResource("39_w7yyf")
+centered = false
+flip_h = true

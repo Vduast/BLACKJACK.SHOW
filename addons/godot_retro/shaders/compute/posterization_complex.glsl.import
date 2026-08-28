@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://djtxfupdqglbd"
+path="res://.godot/imported/posterization_complex.glsl-8fc48b585c5ebd4e0f13d9bc68e756e1.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/posterization_complex.glsl"
+dest_files=["res://.godot/imported/posterization_complex.glsl-8fc48b585c5ebd4e0f13d9bc68e756e1.res"]
+
+[params]
+

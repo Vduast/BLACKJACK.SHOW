@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://3h11vcp00d0r"
+path="res://.godot/imported/vhs_pause.glsl-7f9a4c882b6a6dcbcb03c8797daeaa70.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/vhs_pause.glsl"
+dest_files=["res://.godot/imported/vhs_pause.glsl-7f9a4c882b6a6dcbcb03c8797daeaa70.res"]
+
+[params]
+

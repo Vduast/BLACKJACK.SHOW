@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://dimdcrnx35yh6"
+path="res://.godot/imported/sharpness.glsl-3b90d9314732b4a2db7df20fae46af2f.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/sharpness.glsl"
+dest_files=["res://.godot/imported/sharpness.glsl-3b90d9314732b4a2db7df20fae46af2f.res"]
+
+[params]
+

@@ -1,0 +1,95 @@
+[gd_scene format=3 uid="uid://dgqwlaxv8ts3t"]
+
+[ext_resource type="Shader" uid="uid://ccdlgjwvdheis" path="res://addons/godot_retro/shaders/standard/helloworld_canvasitem_2.gdshader" id="1_y1tkt"]
+[ext_resource type="Shader" uid="uid://bsfgp76fh6usn" path="res://addons/godot_retro/shaders/standard/helloworld_canvasitem.gdshader" id="2_ls3el"]
+[ext_resource type="Material" uid="uid://sou3v5tnb252" path="res://addons/godot_retro/samples/common/map5_dithering/dithering_mat.material" id="3_mybn2"]
+
+[sub_resource type="GDScript" id="7"]
+resource_name = "Map5"
+script/source = "extends Control
+
+func _on_anm_animation_finished(anim_name):
+	$crUV.visible =! $crUV.visible
+	$anm.play(\"anm\")
+"
+
+[sub_resource type="Animation" id="5"]
+resource_name = "anm"
+length = 12.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("BackBufferCopy/fxDithering:material:shader_parameter/DITHERING_STRENTH")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2, 4, 8, 10, 12),
+"transitions": PackedFloat32Array(0.4, 0.4, 1, 0.4, 0.4, 1),
+"update": 0,
+"values": [0.07, 0.0, 0.07, 0.07, 0.0, 0.07]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("BackBufferCopy/fxDithering:material:shader_parameter/COLOR_FACTOR")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 4, 6, 8, 10, 12),
+"transitions": PackedFloat32Array(1, 0.4, 0.4, 0.4, 0.4, 1),
+"update": 0,
+"values": [10.0, 10.0, 1.0, 10.0, 1.0, 10.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ptka7"]
+_data = {
+&"anm": SubResource("5")
+}
+
+[sub_resource type="ShaderMaterial" id="2"]
+shader = ExtResource("1_y1tkt")
+
+[sub_resource type="ShaderMaterial" id="6"]
+shader = ExtResource("2_ls3el")
+
+[node name="Map5" type="Control" unique_id=1373560533]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("7")
+
+[node name="anm" type="AnimationPlayer" parent="." unique_id=752999177]
+libraries/ = SubResource("AnimationLibrary_ptka7")
+autoplay = &"anm"
+
+[node name="crRainbow" type="ColorRect" parent="." unique_id=1978626506]
+material = SubResource("2")
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="crUV" type="ColorRect" parent="." unique_id=1417722510]
+material = SubResource("6")
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="." unique_id=2127322313]
+position = Vector2(160, 120)
+scale = Vector2(1.6, 1.2)
+copy_mode = 2
+
+[node name="fxDithering" type="ColorRect" parent="BackBufferCopy" unique_id=814487395]
+material = ExtResource("3_mybn2")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -100.0
+
+[connection signal="animation_finished" from="anm" to="." method="_on_anm_animation_finished"]

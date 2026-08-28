@@ -1,10 +1,24 @@
 [gd_scene format=3 uid="uid://bivquiksgedvd"]
 
 [ext_resource type="Script" uid="uid://s7timwfootfw" path="res://Scripts/card_3d.gd" id="1_eeaw3"]
+[ext_resource type="Shader" uid="uid://dm3l8h3xm5pvo" path="res://Objetos/Card3D.gdshader" id="2_7mehw"]
 [ext_resource type="FontFile" uid="uid://bxbtmlkk2vhtr" path="res://models/heavy-equipment.regular.ttf" id="2_vkkeg"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_28dlj"]
 size = Vector2(0.4, 0.6)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_740vh"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_bdd6g"]
+noise = SubResource("FastNoiseLite_740vh")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wf6cf"]
+shader = ExtResource("2_7mehw")
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_bdd6g")
+shader_parameter/texture_intensity = 0.09600000456
+shader_parameter/edge_light_intensity = 0.8
+shader_parameter/paper_tint = Color(0.95, 0.9, 0.8, 1)
+shader_parameter/light_color = Color(1, 0.98, 0.9, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vkkeg"]
 bg_color = Color(0, 0, 0, 1)
@@ -12,6 +26,10 @@ border_width_left = 5
 border_width_top = 5
 border_width_right = 5
 border_width_bottom = 5
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_vkkeg"]
 emission_shape = 1
@@ -40,6 +58,7 @@ size = Vector2i(400, 600)
 render_target_update_mode = 1
 
 [node name="Panel" type="Panel" parent="SubViewport" unique_id=1280580006]
+material = SubResource("ShaderMaterial_wf6cf")
 custom_minimum_size = Vector2(400, 600)
 anchors_preset = 8
 anchor_left = 0.5

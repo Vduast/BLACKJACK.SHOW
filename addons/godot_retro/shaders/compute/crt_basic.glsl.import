@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://biqg51sscsa8c"
+path="res://.godot/imported/crt_basic.glsl-31c2233e3fcde2212a5c397d6e076404.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/crt_basic.glsl"
+dest_files=["res://.godot/imported/crt_basic.glsl-31c2233e3fcde2212a5c397d6e076404.res"]
+
+[params]
+

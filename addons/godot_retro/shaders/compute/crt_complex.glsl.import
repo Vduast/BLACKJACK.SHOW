@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://b4f1k4sgnyknl"
+path="res://.godot/imported/crt_complex.glsl-8c272cc2980019de75e622cb569a897e.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/crt_complex.glsl"
+dest_files=["res://.godot/imported/crt_complex.glsl-8c272cc2980019de75e622cb569a897e.res"]
+
+[params]
+

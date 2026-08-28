@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://bmjir5kee3bpk"
+path="res://.godot/imported/dithering.glsl-8f8d6f04b2f8a04744e3dd41f6da7dc6.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/dithering.glsl"
+dest_files=["res://.godot/imported/dithering.glsl-8f8d6f04b2f8a04744e3dd41f6da7dc6.res"]
+
+[params]
+

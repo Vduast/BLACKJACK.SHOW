@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://bcut0xi1xkt"
+path="res://.godot/imported/monochrome.glsl-4d5c97c13bb2abf8865f9814c2523131.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/monochrome.glsl"
+dest_files=["res://.godot/imported/monochrome.glsl-4d5c97c13bb2abf8865f9814c2523131.res"]
+
+[params]
+

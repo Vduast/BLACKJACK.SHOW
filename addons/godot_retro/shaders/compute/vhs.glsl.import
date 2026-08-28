@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://cm6tri7sruive"
+path="res://.godot/imported/vhs.glsl-565b64a0bb934c70fd3f3165fc9d65c1.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/vhs.glsl"
+dest_files=["res://.godot/imported/vhs.glsl-565b64a0bb934c70fd3f3165fc9d65c1.res"]
+
+[params]
+

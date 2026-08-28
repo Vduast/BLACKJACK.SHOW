@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://b2ncg22pyxptx"
+path="res://.godot/imported/lens_distortion.glsl-9163664a29fdebf94c7e11654dc7806e.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/lens_distortion.glsl"
+dest_files=["res://.godot/imported/lens_distortion.glsl-9163664a29fdebf94c7e11654dc7806e.res"]
+
+[params]
+

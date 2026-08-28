@@ -15,7 +15,7 @@ visible = false
 mesh = SubResource("CapsuleMesh_a0tk4")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1842545339]
-transform = Transform3D(1, 0, 0, 0, 0.9998868, -0.01504419, 0, 0.01504419, 0.9998868, 0, 2.1334467, -0.23856175)
+transform = Transform3D(1, 0, 0, 0, 0.9998869, -0.015044191, 0, 0.015044191, 0.9998869, 0, 1.9728818, -0.23856175)
 fov = 83.63852
 
 [node name="CardPosition" type="Node3D" parent="." unique_id=203982183]

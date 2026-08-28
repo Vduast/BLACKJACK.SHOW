@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b514p3t4l28p0"
+path="res://.godot/imported/debug_cube.obj-fd351236089ed3e8d86e1e9e86e982d6.mesh"
+
+[deps]
+
+files=["res://.godot/imported/debug_cube.obj-fd351236089ed3e8d86e1e9e86e982d6.mesh"]
+
+source_file="res://addons/godot_retro/samples/common/map1_psone/debug_cube.obj"
+dest_files=["res://.godot/imported/debug_cube.obj-fd351236089ed3e8d86e1e9e86e982d6.mesh", "res://.godot/imported/debug_cube.obj-fd351236089ed3e8d86e1e9e86e982d6.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://kkritlyqk6us"
+path="res://.godot/imported/glitch_simple.glsl-6b36fdf0a5876d157d298291d88eeb3b.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/glitch_simple.glsl"
+dest_files=["res://.godot/imported/glitch_simple.glsl-6b36fdf0a5876d157d298291d88eeb3b.res"]
+
+[params]
+

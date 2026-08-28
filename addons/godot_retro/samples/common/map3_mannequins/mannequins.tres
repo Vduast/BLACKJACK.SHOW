@@ -1,0 +1,13 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://drbcap41y63px"]
+
+[ext_resource type="Texture2D" uid="uid://bfk3i7hau7fo4" path="res://addons/godot_retro/samples/common/map3_mannequins/tex_mannequin.jpg" id="1_a51ke"]
+[ext_resource type="Texture2D" uid="uid://5bofvonl3qpt" path="res://addons/godot_retro/samples/common/map3_mannequins/tex_mannequin_n.jpg" id="2_llgx8"]
+
+[resource]
+specular_mode = 2
+albedo_color = Color(1, 0, 0, 1)
+albedo_texture = ExtResource("1_a51ke")
+normal_enabled = true
+normal_scale = 2.0
+normal_texture = ExtResource("2_llgx8")
+texture_filter = 0

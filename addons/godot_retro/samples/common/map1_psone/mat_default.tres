@@ -1,0 +1,16 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://0t0puyk6e2pa"]
+
+[ext_resource type="Texture2D" uid="uid://cd7j8kw0vl18p" path="res://addons/godot_retro/samples/common/map1_psone/tex_debug.png" id="1"]
+[ext_resource type="Shader" uid="uid://c4je6uphipyd1" path="res://addons/godot_retro/shaders/standard/psx_lit.gdshader" id="2"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("2")
+shader_parameter/color = Color(1, 1, 1, 1)
+shader_parameter/albedoTex = ExtResource("1")
+shader_parameter/specular_intensity = 0.0
+shader_parameter/resolution = 125.0
+shader_parameter/cull_distance = 20.0
+shader_parameter/affine_texture_mapping_amount = 0.50000002375
+shader_parameter/uv_scale = Vector2(1, 1)
+shader_parameter/uv_offset = Vector2(0, 0)

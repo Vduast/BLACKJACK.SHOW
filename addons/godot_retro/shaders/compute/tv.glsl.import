@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://cg2pdv05i1te2"
+path="res://.godot/imported/tv.glsl-7c23e731c77cf2a6d38173d5d0abeea6.res"
+
+[deps]
+
+source_file="res://addons/godot_retro/shaders/compute/tv.glsl"
+dest_files=["res://.godot/imported/tv.glsl-7c23e731c77cf2a6d38173d5d0abeea6.res"]
+
+[params]
+

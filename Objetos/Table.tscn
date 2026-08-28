@@ -16,14 +16,64 @@
 [ext_resource type="PackedScene" uid="uid://cqmgjvfop5v6h" path="res://Objetos/score_board_3d.tscn" id="8_4desr"]
 [ext_resource type="AudioStream" uid="uid://ihukmk0r6vpm" path="res://sounds/random.wav" id="9_6xixg"]
 [ext_resource type="PackedScene" uid="uid://to1ohweq6gw8" path="res://models/TableBlackack.glb" id="9_dxaed"]
+[ext_resource type="Script" uid="uid://cjcd56gr47iys" path="res://addons/godot_retro/effects/compositor/vhs_effect.gd" id="10_60ayl"]
+[ext_resource type="Script" uid="uid://bdsmigh4b2o11" path="res://addons/godot_retro/effects/compositor/lens_distortion_effect.gd" id="11_lvxmv"]
+[ext_resource type="Script" uid="uid://cnc3ahm04gevv" path="res://addons/godot_retro/effects/compositor/sharpness_effect.gd" id="12_uevhw"]
+[ext_resource type="Script" uid="uid://cm8ln7ov15b25" path="res://addons/godot_retro/effects/compositor/color_correction_effect.gd" id="13_lvxmv"]
 [ext_resource type="AudioStream" uid="uid://clab5xnleh03n" path="res://sounds/Air-conditioner_Ambient.ogg" id="16_7py6j"]
 
 [sub_resource type="Environment" id="Environment_ngllq"]
 background_mode = 1
+sdfgi_enabled = true
 fog_enabled = true
 fog_light_color = Color(0, 0, 0, 1)
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0912
 volumetric_fog_albedo = Color(0.08468992, 0.08468992, 0.08468992, 1)
 volumetric_fog_gi_inject = 10.46
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_lvxmv"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("10_60ayl")
+metadata/_custom_type_script = "uid://cjcd56gr47iys"
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_6rqeb"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("11_lvxmv")
+metadata/_custom_type_script = "uid://bdsmigh4b2o11"
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_vntac"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("12_uevhw")
+metadata/_custom_type_script = "uid://cnc3ahm04gevv"
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_qbhh2"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("13_lvxmv")
+metadata/_custom_type_script = "uid://cm8ln7ov15b25"
+
+[sub_resource type="Compositor" id="Compositor_nnxdf"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_lvxmv"), SubResource("CompositorEffect_6rqeb"), SubResource("CompositorEffect_vntac"), SubResource("CompositorEffect_qbhh2")])
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_ngllq"]
 seed = 45845
@@ -39,10 +89,14 @@ shader = ExtResource("4_ngllq")
 shader_parameter/color_1 = Color(0.8, 0.25, 0.1, 1)
 shader_parameter/color_2 = Color(0.15, 0.35, 0.4, 1)
 shader_parameter/color_3 = Color(0.9, 0.85, 0.7, 1)
+shader_parameter/color_dirt = Color(0.2, 0.15, 0.1, 1)
 shader_parameter/fiber_noise_texture = SubResource("NoiseTexture2D_4desr")
 shader_parameter/fiber_scale = 1.0
-shader_parameter/fiber_depth = 1.1730000557175
+shader_parameter/fiber_depth = 0.0650000030875
 shader_parameter/pattern_scale = 1.0
+shader_parameter/ao_strength = 0.7
+shader_parameter/fuzz_strength = 0.9090000431775
+shader_parameter/dirt_amount = 0.67600003211
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_77yd7"]
 material = SubResource("ShaderMaterial_4desr")
@@ -53,11 +107,16 @@ render_priority = 0
 shader = ExtResource("7_ngllq")
 shader_parameter/color_bg = Color(0.85, 0.75, 0.5, 1)
 shader_parameter/color_accent = Color(0.8, 0.3, 0.1, 1)
+shader_parameter/color_dirt = Color(0.25, 0.2, 0.15, 1)
 shader_parameter/pattern_scale = 1.0
-shader_parameter/circle_size = 0.4330000205675
-shader_parameter/circle_softness = 0.1950000092625
-shader_parameter/circle_stretch = 1.0
-shader_parameter/roughness = 1.0
+shader_parameter/circle_size = 0.3910000185725
+shader_parameter/circle_softness = 0.1790000085025
+shader_parameter/circle_stretch = 0.95900004229262
+shader_parameter/bump_strength = 1.50000007125
+shader_parameter/dirt_amount = 0.37200001767
+shader_parameter/roughness_bg = 0.9
+shader_parameter/roughness_accent = 0.4
+shader_parameter/age_warp = 0.015
 
 [sub_resource type="QuadMesh" id="QuadMesh_4desr"]
 material = SubResource("ShaderMaterial_ngllq")
@@ -83,7 +142,7 @@ snd_lose = ExtResource("6_vntac")
 transform = Transform3D(0.9968942, 0.07263538, -0.030429885, 0.022343896, 0.10964724, 0.9937194, 0.07551574, -0.9913131, 0.10768375, -0.4850211, 18.401705, -0.7431598)
 light_energy = 5.0
 light_indirect_energy = 7.036
-light_volumetric_fog_energy = 8.446
+light_volumetric_fog_energy = 8.604
 shadow_enabled = true
 spot_range = 25.843
 spot_attenuation = 0.2
@@ -93,6 +152,7 @@ spot_angle = 21.75124
 transform = Transform3D(0.8470969, -0.52809185, 0.059546825, 0.48274338, 0.8114875, 0.3293128, -0.2222289, -0.250214, 0.9423414, 1.9806042, 9.521498, 8.786637)
 light_energy = 5.0
 light_indirect_energy = 7.036
+light_volumetric_fog_energy = 0.0
 shadow_enabled = true
 spot_range = 20.344578
 spot_attenuation = 0.64
@@ -100,6 +160,7 @@ spot_angle = 16.51262
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=337170549]
 environment = SubResource("Environment_ngllq")
+compositor = SubResource("Compositor_nnxdf")
 
 [node name="TableCenter" type="Node3D" parent="." unique_id=1823894302]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0366697, -2.5842395)
@@ -132,6 +193,7 @@ mesh = SubResource("PlaneMesh_77yd7")
 transform = Transform3D(-0.6, 0, -9.059749e-08, 0, 0.6, 0, 9.059749e-08, 0, -0.6, 0, -3.8279705, -3.8051677)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1557691793]
+visible = false
 script = ExtResource("6_3nbuj")
 resolution = Vector2(1280, 720)
 grille_amount = 0.0
@@ -166,6 +228,7 @@ bus = &"SFX"
 transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.8660254, 0, -0.8660254, 0.49999997, 0, 27, 0)
 light_energy = 16.0
 light_indirect_energy = 2.054
+light_volumetric_fog_energy = 0.0
 light_size = 0.06
 shadow_enabled = true
 spot_range = 40.0

@@ -11,12 +11,16 @@
 [ext_resource type="FontFile" uid="uid://brre4xp5m1xu2" path="res://models/lalezar.regular.otf" id="5_0bjyp"]
 [ext_resource type="Texture2D" uid="uid://celuql01gym5q" path="res://models/wall_6.png" id="5_0xbyl"]
 [ext_resource type="AudioStream" uid="uid://cnbcfevwvoq8f" path="res://sounds/switch.wav" id="5_4mmxn"]
-[ext_resource type="Shader" uid="uid://bcuio3pnfygbp" path="res://Objetos/FONDO.gdshader" id="5_5ncg0"]
 [ext_resource type="Texture2D" uid="uid://cw2pnm7vx70qx" path="res://Menus/Diseño_sin_título__1_-removebg-preview.png" id="5_ju15h"]
 [ext_resource type="AudioStream" uid="uid://dct4687tkfftu" path="res://sounds/Metal_twang.wav" id="6_6rlie"]
 [ext_resource type="Theme" uid="uid://bm0u0mpbjdg64" path="res://shaders/TemaJuego.tres" id="7_6rlie"]
 [ext_resource type="AudioStream" uid="uid://ihukmk0r6vpm" path="res://sounds/random.wav" id="15_x147o"]
 [ext_resource type="AudioStream" uid="uid://b3cpk68q77mdp" path="res://sounds/Radio_static.ogg" id="16_4mmxn"]
+[ext_resource type="Shader" uid="uid://beo41x3hdryc6" path="res://Menus/MainMenu.gdshader" id="16_6rlie"]
+[ext_resource type="Script" uid="uid://cjcd56gr47iys" path="res://addons/godot_retro/effects/compositor/vhs_effect.gd" id="18_r82sl"]
+[ext_resource type="Script" uid="uid://bdsmigh4b2o11" path="res://addons/godot_retro/effects/compositor/lens_distortion_effect.gd" id="19_t25vh"]
+[ext_resource type="Script" uid="uid://cnc3ahm04gevv" path="res://addons/godot_retro/effects/compositor/sharpness_effect.gd" id="20_wcfrl"]
+[ext_resource type="Script" uid="uid://bhrup1cxyf8hk" path="res://addons/godot_retro/effects/compositor/dithering_effect.gd" id="21_tyucr"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eiy7p"]
 emission_enabled = true
@@ -37,23 +41,88 @@ font_size = 40
 
 [sub_resource type="Theme" id="Theme_6rlie"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1txdl"]
-albedo_texture = ExtResource("5_0xbyl")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ngllq"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4mmxn"]
 render_priority = 0
-shader = ExtResource("5_5ncg0")
-shader_parameter/color_bg = Color(0.85, 0.75, 0.5, 1)
-shader_parameter/color_accent = Color(0.8, 0.3, 0.1, 1)
-shader_parameter/pattern_scale = 0.5
-shader_parameter/circle_size = 0.0
-shader_parameter/circle_softness = 0.1450000068875
-shader_parameter/circle_stretch = 1.0
-shader_parameter/roughness = 1.0
+shader = ExtResource("16_6rlie")
+shader_parameter/wall_texture = ExtResource("5_0xbyl")
+shader_parameter/uv_scale = 1.0
+shader_parameter/bump_strength = 2.2690001077775
+shader_parameter/roughness_paper = 0.95
+shader_parameter/roughness_pattern = 0.5
+shader_parameter/metallic_pattern = 0.15
+shader_parameter/dirt_amount = 0.3
+shader_parameter/dirt_color = Color(0.12, 0.09, 0.06, 1)
+shader_parameter/edge_darkness = 0.8
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wff78"]
+render_priority = 0
+shader = ExtResource("16_6rlie")
+shader_parameter/uv_scale = 1.0
+shader_parameter/bump_strength = 1.5
+shader_parameter/roughness_paper = 0.95
+shader_parameter/roughness_pattern = 0.5
+shader_parameter/metallic_pattern = 0.15
+shader_parameter/dirt_amount = 0.3
+shader_parameter/dirt_color = Color(0.12, 0.09, 0.06, 1)
+shader_parameter/edge_darkness = 0.8
 
 [sub_resource type="QuadMesh" id="QuadMesh_0xbyl"]
-material = SubResource("ShaderMaterial_ngllq")
+material = SubResource("ShaderMaterial_wff78")
 size = Vector2(10, 8)
+
+[sub_resource type="Environment" id="Environment_dhnk7"]
+background_mode = 1
+sdfgi_enabled = true
+fog_enabled = true
+fog_light_color = Color(0, 0, 0, 1)
+volumetric_fog_enabled = true
+volumetric_fog_density = 0.0912
+volumetric_fog_albedo = Color(0.08468992, 0.08468992, 0.08468992, 1)
+volumetric_fog_gi_inject = 10.46
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_xl8m0"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("18_r82sl")
+metadata/_custom_type_script = "uid://cjcd56gr47iys"
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_6rqeb"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("19_t25vh")
+metadata/_custom_type_script = "uid://bdsmigh4b2o11"
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_wcfrl"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("20_wcfrl")
+metadata/_custom_type_script = "uid://cnc3ahm04gevv"
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_tyucr"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("21_tyucr")
+dithering_strength = 0.041
+metadata/_custom_type_script = "uid://bhrup1cxyf8hk"
+
+[sub_resource type="Compositor" id="Compositor_10ihl"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_xl8m0"), SubResource("CompositorEffect_6rqeb"), SubResource("CompositorEffect_wcfrl"), SubResource("CompositorEffect_tyucr")])
 
 [node name="Node3D" type="Node3D" unique_id=1370715290]
 
@@ -282,7 +351,7 @@ transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0.014655203, -0.37483704, -0.
 
 [node name="MeshInstance3D6" type="MeshInstance3D" parent="." unique_id=992585521]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08146858, 1.0458441, -1.8795929)
-material_override = SubResource("StandardMaterial3D_1txdl")
+material_override = SubResource("ShaderMaterial_4mmxn")
 gi_mode = 0
 mesh = SubResource("QuadMesh_0xbyl")
 
@@ -292,6 +361,10 @@ transform = Transform3D(1, 0, 0, 0, 0.41358116, 0.91046727, 0, -0.91046727, 0.41
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=622548076]
 stream = ExtResource("16_4mmxn")
 autoplay = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=261125524]
+environment = SubResource("Environment_dhnk7")
+compositor = SubResource("Compositor_10ihl")
 
 [connection signal="pressed" from="MenuViewport/MenuUI/ConnectionBox/HostButton" to="MenuViewport/MenuUI" method="_on_host_pressed"]
 [connection signal="pressed" from="MenuViewport/MenuUI/ConnectionBox/JoinButton" to="MenuViewport/MenuUI" method="_on_join_pressed"]

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://fjxfkamwtrq5"]
 
 [ext_resource type="PackedScene" uid="uid://7b0nl2rgay3x" path="res://Menus/DEALER.glb" id="1_m5jkw"]
-[ext_resource type="Script" uid="uid://c8dfj6gpxyyep" path="res://Scripts/dealer.gd" id="2_46f5c"]
+[ext_resource type="Script" uid="uid://c8dfj6gpxyyep" path="res://Scripts/Dealer.gd" id="2_46f5c"]
 [ext_resource type="Material" uid="uid://ukx1o7564608" path="res://Menus/Material.tres" id="3_wfjoc"]
 
 [sub_resource type="JointLimitationCone3D" id="JointLimitationCone3D_46f5c"]
@@ -88,9 +88,9 @@ node_connections = [&"output", 0, &"MezclarHablar", &"EstadoIZQ", 0, &"HandMoveL
 [node name="DEALER" unique_id=82334987 instance=ExtResource("1_m5jkw")]
 script = ExtResource("2_46f5c")
 
-[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(148079701) index="0" unique_id=93210608]
-bones/3/rotation = Quaternion(0.056319747, 0.0012497274, 0.0011154836, 0.9984115)
-bones/5/rotation = Quaternion(-0.8940278, -5.471966e-08, -1.0709476e-07, 0.44801152)
+[node name="Skeleton3D" parent="Armature" parent_id_path=PackedInt32Array(1921491875) index="0" unique_id=777797172]
+bones/3/rotation = Quaternion(0.06090559, 0.0013566976, 0.0012109716, 0.9981419)
+bones/5/rotation = Quaternion(-0.91573334, -4.7754927e-08, -1.096116e-07, 0.40178666)
 bones/10/rotation = Quaternion(6.2537733e-06, -0.0010831627, -0.005796544, 0.99998266)
 bones/11/rotation = Quaternion(3.370823e-08, 1.4798033e-07, 0.15849856, 0.9873592)
 bones/12/rotation = Quaternion(-1.2822979e-08, 3.4671502e-10, 0.16914275, 0.98559153)
@@ -122,7 +122,7 @@ bones/49/rotation = Quaternion(-0.33994788, -0.1705137, -0.35918984, 0.85225767)
 bones/50/rotation = Quaternion(0.02861094, -0.091820456, -0.010485968, 0.99530923)
 bones/51/rotation = Quaternion(0.06593175, -0.11026054, -0.16701096, 0.9775495)
 
-[node name="Sphere_002" parent="Armature/Skeleton3D" index="0" unique_id=480424771]
+[node name="Sphere_002" parent="Armature/Skeleton3D" index="0" unique_id=1062301074]
 surface_material_override/0 = ExtResource("3_wfjoc")
 
 [node name="CCDIK3D" type="CCDIK3D" parent="Armature/Skeleton3D" index="1" unique_id=1371947886]
@@ -166,7 +166,7 @@ settings/1/joints/2/limitation = SubResource("JointLimitationCone3D_wfjoc")
 settings/1/joints/2/limitation/right_axis = 0
 settings/1/joints/2/limitation/rotation_offset = Quaternion(0, 0, 0, 1)
 
-[node name="AnimationTree" type="AnimationTree" parent="AnimationPlayer" parent_id_path=PackedInt32Array(2035540264) index="0" unique_id=955942032]
+[node name="AnimationTree" type="AnimationTree" parent="AnimationPlayer" parent_id_path=PackedInt32Array(302667581) index="0" unique_id=955942032]
 root_node = NodePath("../..")
 tree_root = SubResource("AnimationNodeBlendTree_16aoc")
 anim_player = NodePath("..")

@@ -1,0 +1,182 @@
+[gd_scene format=3 uid="uid://cflj5251453pl"]
+
+[ext_resource type="Material" uid="uid://drbcap41y63px" path="res://addons/godot_retro/samples/common/map3_mannequins/mannequins.tres" id="1_lf8x8"]
+[ext_resource type="ArrayMesh" uid="uid://ddbogjw1x7wc1" path="res://addons/godot_retro/samples/common/map3_mannequins/2.obj" id="2_js25e"]
+[ext_resource type="ArrayMesh" uid="uid://dq85eyuvad8r1" path="res://addons/godot_retro/samples/common/map3_mannequins/1.obj" id="3_spy7y"]
+[ext_resource type="Material" uid="uid://ma5actgdq6fi" path="res://addons/godot_retro/samples/common/map3_mannequins/floor.tres" id="4_qlsqm"]
+[ext_resource type="Shader" uid="uid://bl0lthd2tk8lw" path="res://addons/godot_retro/shaders/standard/lens_distortion.gdshader" id="5_kdeqc"]
+[ext_resource type="Shader" uid="uid://dhgg836cc2htq" path="res://addons/godot_retro/shaders/standard/sharpness.gdshader" id="6_6dxqr"]
+[ext_resource type="Shader" uid="uid://d3gc457gpcdt4" path="res://addons/godot_retro/shaders/standard/crt_complex.gdshader" id="7_ubmpr"]
+[ext_resource type="Texture2D" uid="uid://dsrfu3ootv571" path="res://addons/godot_retro/textures/grain.jpg" id="8_be6c2"]
+
+[sub_resource type="Environment" id="4"]
+background_mode = 1
+tonemap_mode = 2
+glow_levels/2 = 1.0
+glow_levels/3 = 0.0
+glow_levels/7 = 1.0
+glow_intensity = 0.34
+glow_strength = 0.92
+glow_hdr_threshold = 0.27
+glow_hdr_scale = 1.6
+
+[sub_resource type="PlaneMesh" id="2"]
+size = Vector2(4, 4)
+
+[sub_resource type="Animation" id="5"]
+resource_name = "Light3D"
+length = 6.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SpotLight2:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.5, 2, 3.5, 4, 5.5),
+"transitions": PackedFloat32Array(1, 0.4, 1, 0.4, 1, 0.4),
+"update": 0,
+"values": [Vector3(0, 1.891, 0.067), Vector3(0.514, 1.891, 0.301), Vector3(0.514, 1.891, 0.301), Vector3(-0.401, 2.092, 0.254), Vector3(-0.401, 2.092, 0.254), Vector3(0, 1.891, 0.067)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_7wbbk"]
+_data = {
+&"Light3D": SubResource("5")
+}
+
+[sub_resource type="ShaderMaterial" id="6"]
+shader = ExtResource("5_kdeqc")
+shader_parameter/strength = -0.03500000003256
+
+[sub_resource type="ShaderMaterial" id="7"]
+shader = ExtResource("6_6dxqr")
+shader_parameter/sharpen_amount = 1.0
+
+[sub_resource type="ShaderMaterial" id="8"]
+shader = ExtResource("7_ubmpr")
+shader_parameter/blur_amount = 3.50000016625
+shader_parameter/signal_quality = 0.30000001425
+shader_parameter/bottom_strenth = 0.10000000475
+shader_parameter/grain_tex = ExtResource("8_be6c2")
+
+[node name="Map3" type="Node3D" unique_id=70473153]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1337724158]
+environment = SubResource("4")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=169701759]
+transform = Transform3D(1, 0, 0, 0, 0.9348566, 0.35502583, 0, -0.35502583, 0.9348566, 0, 1.436, 0.067)
+current = true
+fov = 110.0
+
+[node name="Models" type="Node3D" parent="." unique_id=1228017613]
+
+[node name="Mannequin" type="MeshInstance3D" parent="Models" unique_id=1722233476]
+transform = Transform3D(0.10732993, 0, 0.109594025, 0, 0.1533965, 0, -0.109594025, 0, 0.10732993, -0.4163963, -0.0285, -0.3737667)
+material_override = ExtResource("1_lf8x8")
+mesh = ExtResource("2_js25e")
+skeleton = NodePath("")
+
+[node name="Mannequin2" type="MeshInstance3D" parent="Models" unique_id=250617400]
+transform = Transform3D(0.0388213, 0, -0.0672404, 0, 0.0776426, 0, 0.0672404, 0, 0.0388213, 0.427875, 0.0415803, -0.404017)
+material_override = ExtResource("1_lf8x8")
+mesh = ExtResource("3_spy7y")
+skeleton = NodePath("")
+
+[node name="Floor" type="Node3D" parent="Models" unique_id=1982288273]
+
+[node name="Floor" type="MeshInstance3D" parent="Models/Floor" unique_id=556976960]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, -2)
+mesh = SubResource("2")
+surface_material_override/0 = ExtResource("4_qlsqm")
+
+[node name="Floor2" type="MeshInstance3D" parent="Models/Floor" unique_id=1176318904]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -2)
+material_override = ExtResource("4_qlsqm")
+mesh = SubResource("2")
+surface_material_override/0 = ExtResource("4_qlsqm")
+
+[node name="Floor3" type="MeshInstance3D" parent="Models/Floor" unique_id=713381437]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 2)
+mesh = SubResource("2")
+surface_material_override/0 = ExtResource("4_qlsqm")
+
+[node name="Floor4" type="MeshInstance3D" parent="Models/Floor" unique_id=701211782]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 2)
+mesh = SubResource("2")
+surface_material_override/0 = ExtResource("4_qlsqm")
+
+[node name="Light" type="Node3D" parent="." unique_id=962967631]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Light" unique_id=64130137]
+libraries/ = SubResource("AnimationLibrary_7wbbk")
+autoplay = &"Light3D"
+
+[node name="SpotLight2" type="SpotLight3D" parent="Light" unique_id=1460893780]
+transform = Transform3D(1, 0, 0, 0, 0.977681, 0.210096, 0, -0.210096, 0.977681, 0, 1.891, 0.067)
+light_energy = 1.5
+light_specular = 0.0
+shadow_enabled = true
+shadow_bias = 0.01
+spot_range = 3.0
+spot_angle = 65.3
+
+[node name="UI" type="Control" parent="." unique_id=1893635747]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Effects" type="Control" parent="UI" unique_id=1215153981]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackBufferCopy" type="BackBufferCopy" parent="UI/Effects" unique_id=1217811823]
+position = Vector2(160, 120)
+scale = Vector2(1.6, 1.2)
+copy_mode = 2
+
+[node name="LensDistortion" type="ColorRect" parent="UI/Effects/BackBufferCopy" unique_id=2131562667]
+material = SubResource("6")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -100.0
+
+[node name="BackBufferCopy2" type="BackBufferCopy" parent="UI/Effects" unique_id=51964564]
+position = Vector2(160, 120)
+scale = Vector2(1.6, 1.2)
+copy_mode = 2
+
+[node name="Sharpness" type="ColorRect" parent="UI/Effects/BackBufferCopy2" unique_id=2030725541]
+material = SubResource("7")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -100.0
+
+[node name="BackBufferCopy3" type="BackBufferCopy" parent="UI/Effects" unique_id=790062234]
+position = Vector2(160, 120)
+scale = Vector2(1.6, 1.2)
+copy_mode = 2
+
+[node name="NTSC" type="ColorRect" parent="UI/Effects/BackBufferCopy3" unique_id=2047195152]
+material = SubResource("8")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -100.0
+offset_right = -100.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
