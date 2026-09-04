@@ -449,23 +449,3 @@ Además, el proyecto integra dos addons de efectos visuales:
 Estos efectos, combinados con la niebla volumétrica configurada en el `WorldEnvironment` de la mesa (`Table.tscn`), conforman la dirección de arte general del juego: una mesa de casino con aspecto de transmisión de TV retro/VHS.
 
 ---
-
-## Requisitos e instalación
-
-1. Instalar **Godot Engine 4.x** (motor con el que fue creado el proyecto).
-2. Clonar el repositorio:
-   ```bash
-   git clone https://github.com/Vduast/BLACKJACK.SHOW.git
-   ```
-3. Abrir la carpeta del proyecto desde el gestor de proyectos de Godot (`project.godot`).
-4. Para jugar en red local, todos los dispositivos deben estar conectados a la **misma red LAN**; el host comparte su código de sala generado para que los demás se unan.
-5. Existe un build ya exportado para Android (`Blackjack.apk.idsig`, `Blackjack.pck`) dentro del propio repositorio.
-
----
-
-## Limitaciones conocidas / notas
-
-- El repositorio original no incluye un README propio; esta documentación fue generada a partir del análisis directo de los scripts (`Scripts/`), las escenas de objetos y menús (`Objetos/`, `Menus/`), los shaders (`shaders/`) y el archivo de configuración (`project.godot`).
-- No se incluyeron en este análisis las carpetas `Animations`, `addons` (contenido interno de los plugins `godot_retro` y `script-ide`), `models`, `sounds` ni `textures`, por lo que detalles finos de animaciones esqueléticas, configuración interna de los addons, o assets específicos no están documentados aquí.
-- El sistema de red está diseñado para **LAN**, no incluye conexión mediante servidores relay o NAT punch-through para internet abierto.
-- No hay evidencia de persistencia de datos (no se guardan partidas, progreso ni configuración entre sesiones más allá de los buses de audio en tiempo real).
