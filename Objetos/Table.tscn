@@ -193,7 +193,6 @@ mesh = SubResource("PlaneMesh_77yd7")
 transform = Transform3D(-0.6, 0, -9.059749e-08, 0, 0.6, 0, 9.059749e-08, 0, -0.6, 0, -3.8279705, -3.8051677)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1557691793]
-visible = false
 script = ExtResource("6_3nbuj")
 resolution = Vector2(1280, 720)
 grille_amount = 0.0

@@ -364,12 +364,3 @@ Cada comodín solo puede usarse una vez; al confirmarse su uso, se destruye visu
 3. Abrir la carpeta del proyecto desde el gestor de proyectos de Godot (`project.godot`).
 4. Para jugar en red local, todos los dispositivos deben estar conectados a la **misma red LAN**; el host comparte su código de sala generado para que los demás se unan.
 5. Existe un build ya exportado para Android (`Blackjack.apk.idsig`, `Blackjack.pck`) dentro del propio repositorio.
-
----
-
-## Limitaciones conocidas / notas
-
-- El repositorio original no incluye un README propio; esta documentación fue generada a partir del análisis directo de los scripts en `Scripts/`.
-- No se incluyeron en este análisis los archivos de escena (`.tscn`), shaders (`.gdshader`) ni el proyecto Godot completo (`project.godot`), por lo que detalles de configuración de nodos, jerarquía de escena o parámetros exactos de shader no están documentados aquí.
-- El sistema de red está diseñado para **LAN**, no incluye conexión mediante servidores relay o NAT punch-through para internet abierto.
-- No hay evidencia de persistencia de datos (no se guardan partidas, progreso ni configuración entre sesiones más allá de los buses de audio en tiempo real).
