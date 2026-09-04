@@ -30,9 +30,6 @@ Videojuego de Blackjack (21) en 3D, multijugador en red local, desarrollado con 
 8. [Sistema de Comodines (Jokers)](#sistema-de-comodines-jokers)
 9. [Sistema de red (Multijugador)](#sistema-de-red-multijugador)
 10. [Shaders y efectos visuales](#shaders-y-efectos-visuales)
-11. [Requisitos e instalación](#requisitos-e-instalación)
-12. [Limitaciones conocidas / notas](#limitaciones-conocidas--notas)
-
 ---
 
 ## Descripción general
