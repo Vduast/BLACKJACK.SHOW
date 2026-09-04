@@ -10,7 +10,9 @@ Videojuego de Blackjack (21) en 3D, multijugador en red local, desarrollado con 
 2. [Tecnología utilizada](#tecnología-utilizada)
 3. [Estructura del proyecto](#estructura-del-proyecto)
 4. [Arquitectura y flujo del juego](#arquitectura-y-flujo-del-juego)
-5. [Documentación de scripts y funciones](#documentación-de-scripts-y-funciones)
+5. [Configuración del proyecto (project.godot)](#configuración-del-proyecto-projectgodot)
+6. [Autoloads (Singletons)](#autoloads-singletons)
+7. [Documentación de scripts y funciones](#documentación-de-scripts-y-funciones)
    - [NetworkManager.gd](#networkmanagergd)
    - [table.gd](#tablegd)
    - [tableui.gd](#tableuigd)
@@ -19,13 +21,17 @@ Videojuego de Blackjack (21) en 3D, multijugador en red local, desarrollado con 
    - [card_3d.gd](#card_3dgd)
    - [Deck.gd](#deckgd)
    - [JokerUI.gd](#jokeruigd)
+   - [score_board_3d.gd](#score_board_3dgd)
+   - [score_board_ui.gd](#score_board_uigd)
+   - [fadelayer.gd (Transition)](#fadelayergd-transition)
    - [MenuUi.gd](#menuuigd)
    - [lobbyui.gd](#lobbyuigd)
    - [PantallaInteractiva.gd](#pantallainteractivagd)
-6. [Sistema de Comodines (Jokers)](#sistema-de-comodines-jokers)
-7. [Sistema de red (Multijugador)](#sistema-de-red-multijugador)
-8. [Requisitos e instalación](#requisitos-e-instalación)
-9. [Limitaciones conocidas / notas](#limitaciones-conocidas--notas)
+8. [Sistema de Comodines (Jokers)](#sistema-de-comodines-jokers)
+9. [Sistema de red (Multijugador)](#sistema-de-red-multijugador)
+10. [Shaders y efectos visuales](#shaders-y-efectos-visuales)
+11. [Requisitos e instalación](#requisitos-e-instalación)
+12. [Limitaciones conocidas / notas](#limitaciones-conocidas--notas)
 
 ---
 
@@ -56,6 +62,8 @@ BLACKJACK.SHOW simula una mesa de casino de Blackjack con:
 | Gráficos | Shaders personalizados (`dissolve_card.gdshader`), materiales 3D, `SubViewport` para renderizar UI 2D sobre mallas 3D |
 | Audio | Sistema de *pooling* de reproductores de sonido, buses de audio configurables (Master, SFX, Music, Voz) |
 
+Visualmente, el juego apunta a una **estética retro/VHS de casino ochentero**: usa un pipeline de post-procesado con efectos de VHS, distorsión de lente, nitidez y corrección de color (addon `godot_retro`), un addon `crt` adicional, reducción de profundidad de color estilo PS1 (`color_grade.gdshader`), niebla volumétrica y shaders "sucios/vintage" (mugre, desgaste de papel) aplicados a fondos, mesa y elementos de UI.
+
 ---
 
 ## Estructura del proyecto
@@ -76,6 +84,36 @@ BLACKJACK.SHOW/
 ├── Blackjack.pck         # Paquete de recursos exportado
 └── Blackjack.zip         # Build empaquetado
 ```
+
+---
+
+## Configuración del proyecto (project.godot)
+
+A partir del archivo `project.godot` se confirman los siguientes datos técnicos:
+
+| Parámetro | Valor |
+|---|---|
+| Nombre de la aplicación | `Blackjack` |
+| Versión de Godot | `4.7` (Forward+ renderer) |
+| Resolución de ventana | `1920 x 1080`, modo `3` (pantalla completa), no redimensionable |
+| VSync | Desactivado (`vsync_mode = 0`) |
+| Driver de renderizado (Windows) | `d3d12` |
+| Plugins habilitados | `godot_retro` (efectos de compositor retro), `script-ide` (entorno de edición de scripts) |
+| Shader globals | Parámetros PSX globales (`psx_affine_strength`, `psx_bit_depth`, `psx_fog_*`, `vertex_snap_intensity`, etc.) — confirman un **estilo visual retro tipo PlayStation 1** aplicado de forma global a los shaders del proyecto |
+| Grupo global | `cartas` — grupo usado para identificar todas las cartas 3D en escena (usado por `table.gd` para animar la limpieza de mesa) |
+
+---
+
+## Autoloads (Singletons)
+
+El proyecto define 4 autoloads globales (accesibles desde cualquier script sin necesidad de referencia directa):
+
+| Autoload | Script / Escena | Rol |
+|---|---|---|
+| `NetworkManager` | `NetworkManager.gd` | Gestión completa de la conexión multijugador (ver documentación abajo). |
+| `PantallaInteractiva` | `PantallaInteractiva.gd` | Sistema para proyectar y controlar interfaces 2D sobre superficies 3D. |
+| `Transition` | `fadelayer.gd` | Capa global de fundido a negro (fade in/out) usada en cada cambio de escena del juego. |
+| `ColorGrade` | `color_grade.tscn` / `color_grade.gdshader` | Overlay de pantalla completa que aplica posterización de color (reducción de profundidad de color) para lograr una estética retro tipo PS1; no tiene script propio, es un `ColorRect` con `ShaderMaterial`. |
 
 ---
 
@@ -274,6 +312,40 @@ Es el script más extenso del proyecto: gestiona el mazo, el reparto, los turnos
 
 ---
 
+### `score_board_3d.gd`
+**Hereda de:** `Node3D`. Es la contraparte 3D del marcador: proyecta la interfaz `ScoreBoardUI` (2D, vía `SubViewport`) sobre una malla 3D visible en la mesa, con emisión de luz propia para que se lea como una pantalla/tótem luminoso.
+
+| Función | Descripción |
+|---|---|
+| `_ready()` | Crea un `StandardMaterial3D` con la textura del `SubViewport` como *albedo* y como *emission* (multiplicador de energía 2.0), y lo aplica a la malla del marcador. |
+| `refresh_board(data, dealer_score)` | Reenvía los datos de jugadores y la puntuación del dealer a la interfaz 2D interna (`ScoreBoardUI.update_data`). |
+| `show_temporary_status(text)` | Reenvía un mensaje de estado temporal a la interfaz 2D interna (`ScoreBoardUI.flash_status`). |
+
+---
+
+### `score_board_ui.gd`
+**Clase:** `ScoreBoardUI` — **Hereda de:** `Control`. Interfaz 2D que lista en tiempo real a los jugadores activos (nombre, vidas, puntuación) y al dealer, renderizada dentro del `SubViewport` de `score_board_3d.gd`.
+
+| Función | Descripción |
+|---|---|
+| `_ready()` | Oculta la etiqueta de estado temporal al iniciar. |
+| `update_data(players_data, dealer_score)` | Guarda los datos recibidos y reconstruye la lista visual. |
+| `_rebuild_list()` | Limpia y vuelve a generar las etiquetas de cada jugador (❤️ vidas, 🃏 puntos) y, si corresponde, del dealer (🎩). |
+| `flash_status(message, seconds)` | Oculta temporalmente la lista de jugadores y muestra un mensaje grande centrado (ej. "Dealer's turn...") durante los segundos indicados, luego revierte automáticamente. |
+
+---
+
+### `fadelayer.gd` (Transition)
+**Hereda de:** `CanvasLayer` — **Autoload:** `Transition`. Capa global de fundido a negro utilizada en cada cambio de escena del juego (menú → mesa, mesa → menú, migración de host, etc.).
+
+| Función | Descripción |
+|---|---|
+| `_ready()` | Inicia la capa completamente en negro y ejecuta un fundido de entrada (`fade_in`) al arrancar el juego. |
+| `fade_in()` | Anima la opacidad del rectángulo de fundido de 1.0 (negro) a 0.0 (transparente) en `FADE_TIME` (0.5s). |
+| `fade_to_scene(scene_path)` | Funde a negro, cambia a la escena indicada (`change_scene_to_file`) y vuelve a hacer fundido de entrada. Es la función invocada como `Transition.fade_to_scene(...)` desde `NetworkManager.gd`. |
+
+---
+
 ### `MenuUi.gd`
 **Hereda de:** `Control`. Controla el menú principal completo: selección de modo, conexión multijugador, lobby y configuración.
 
@@ -354,6 +426,30 @@ Cada comodín solo puede usarse una vez; al confirmarse su uso, se destruye visu
 
 ---
 
+## Shaders y efectos visuales
+
+El proyecto usa un número considerable de shaders personalizados (`.gdshader`) para lograr su identidad visual "retro/vintage de casino":
+
+| Shader | Tipo | Propósito |
+|---|---|---|
+| `dissolve_card.gdshader` | Spatial (3D) | Efecto de disolución/materialización de las cartas (usado por `card_3d.gd` en `aparecer()`/`desaparecer()`). |
+| `Card3D.gdshader` / `table_ui.gdshader` | Canvas item (2D) | Textura de "papel envejecido" (ruido + tinte cálido) aplicada sobre elementos de UI tipo StyleBox. |
+| `suitshaders.gdshader` | Spatial | Colorea los símbolos de palo (rojo para corazones/diamantes, negro para tréboles/picas) sobre una textura base. |
+| `JokerUI.gdshader` | Canvas item | Efecto de "quemado" con textura de papel y patrón de fuego procedural (ruido), usado al destruir un comodín tras su uso. |
+| `stylized.gdshader` | Spatial | Shader de iluminación "por pasos" (*cel-shading*/toon) con soporte de textura normal y especular configurable. |
+| `color_grade.gdshader` | Canvas item (pantalla completa) | Posterización de color de toda la pantalla (reduce la profundidad de color, estética PS1); controlado por el autoload `ColorGrade`. |
+| `Table.gdshader` | Canvas item (pantalla completa) | Efecto de granulado (grain), líneas de barrido (scanlines) y tinte holográfico/cian — refuerza la estética retro/VHS. |
+| `FONDO.gdshader` / `ground.gdshader` | Spatial | Materiales procedurales del fondo/suelo con patrones geométricos, relieve (bump), mugre/desgaste y propiedades físicas realistas (rugosidad, metalicidad). |
+| `MainMenu.gdshader` | Spatial | Material de pared/fondo del menú principal con relieve procedural, mugre y desgaste. |
+
+Además, el proyecto integra dos addons de efectos visuales:
+- **`addons/godot_retro`**: efectos de compositor (`vhs_effect.gd`, `lens_distortion_effect.gd`, `sharpness_effect.gd`, `color_correction_effect.gd`) aplicados como post-procesado global sobre la cámara 3D.
+- **`addons/crt`**: efecto adicional de pantalla tipo monitor CRT.
+
+Estos efectos, combinados con la niebla volumétrica configurada en el `WorldEnvironment` de la mesa (`Table.tscn`), conforman la dirección de arte general del juego: una mesa de casino con aspecto de transmisión de TV retro/VHS.
+
+---
+
 ## Requisitos e instalación
 
 1. Instalar **Godot Engine 4.x** (motor con el que fue creado el proyecto).
@@ -364,3 +460,12 @@ Cada comodín solo puede usarse una vez; al confirmarse su uso, se destruye visu
 3. Abrir la carpeta del proyecto desde el gestor de proyectos de Godot (`project.godot`).
 4. Para jugar en red local, todos los dispositivos deben estar conectados a la **misma red LAN**; el host comparte su código de sala generado para que los demás se unan.
 5. Existe un build ya exportado para Android (`Blackjack.apk.idsig`, `Blackjack.pck`) dentro del propio repositorio.
+
+---
+
+## Limitaciones conocidas / notas
+
+- El repositorio original no incluye un README propio; esta documentación fue generada a partir del análisis directo de los scripts (`Scripts/`), las escenas de objetos y menús (`Objetos/`, `Menus/`), los shaders (`shaders/`) y el archivo de configuración (`project.godot`).
+- No se incluyeron en este análisis las carpetas `Animations`, `addons` (contenido interno de los plugins `godot_retro` y `script-ide`), `models`, `sounds` ni `textures`, por lo que detalles finos de animaciones esqueléticas, configuración interna de los addons, o assets específicos no están documentados aquí.
+- El sistema de red está diseñado para **LAN**, no incluye conexión mediante servidores relay o NAT punch-through para internet abierto.
+- No hay evidencia de persistencia de datos (no se guardan partidas, progreso ni configuración entre sesiones más allá de los buses de audio en tiempo real).
