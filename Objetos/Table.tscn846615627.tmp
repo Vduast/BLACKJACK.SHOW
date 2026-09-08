@@ -16,8 +16,12 @@
 [ext_resource type="PackedScene" uid="uid://cqmgjvfop5v6h" path="res://Objetos/score_board_3d.tscn" id="8_4desr"]
 [ext_resource type="AudioStream" uid="uid://ihukmk0r6vpm" path="res://sounds/random.wav" id="9_6xixg"]
 [ext_resource type="PackedScene" uid="uid://to1ohweq6gw8" path="res://models/TableBlackack.glb" id="9_dxaed"]
+[ext_resource type="Script" uid="uid://40kcls875veu" path="res://Scripts/AudioPool.gd" id="9_re6s8"]
 [ext_resource type="Script" uid="uid://cjcd56gr47iys" path="res://addons/godot_retro/effects/compositor/vhs_effect.gd" id="10_60ayl"]
+[ext_resource type="Script" uid="uid://dkyr7075cmsc1" path="res://Scripts/JokerSystem.gd" id="10_p1gv3"]
+[ext_resource type="Script" uid="uid://c0362vb423pst" path="res://Scripts/RoundManager.gd" id="11_isqi5"]
 [ext_resource type="Script" uid="uid://bdsmigh4b2o11" path="res://addons/godot_retro/effects/compositor/lens_distortion_effect.gd" id="11_lvxmv"]
+[ext_resource type="Script" uid="uid://cnc3ahm04gevv" path="res://addons/godot_retro/effects/compositor/sharpness_effect.gd" id="12_uevhw"]
 [ext_resource type="Script" uid="uid://cm8ln7ov15b25" path="res://addons/godot_retro/effects/compositor/color_correction_effect.gd" id="13_lvxmv"]
 [ext_resource type="AudioStream" uid="uid://clab5xnleh03n" path="res://sounds/Air-conditioner_Ambient.ogg" id="16_7py6j"]
 
@@ -31,6 +35,16 @@ volumetric_fog_density = 0.0912
 volumetric_fog_albedo = Color(0.08468992, 0.08468992, 0.08468992, 1)
 volumetric_fog_gi_inject = 10.46
 
+[sub_resource type="CompositorEffect" id="CompositorEffect_lvxmv"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("10_60ayl")
+metadata/_custom_type_script = "uid://cjcd56gr47iys"
+
 [sub_resource type="CompositorEffect" id="CompositorEffect_6rqeb"]
 resource_local_to_scene = false
 resource_name = ""
@@ -40,6 +54,16 @@ needs_motion_vectors = false
 needs_normal_roughness = false
 script = ExtResource("11_lvxmv")
 metadata/_custom_type_script = "uid://bdsmigh4b2o11"
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_vntac"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = false
+needs_normal_roughness = false
+script = ExtResource("12_uevhw")
+metadata/_custom_type_script = "uid://cnc3ahm04gevv"
 
 [sub_resource type="CompositorEffect" id="CompositorEffect_qbhh2"]
 resource_local_to_scene = false
@@ -51,18 +75,8 @@ needs_normal_roughness = false
 script = ExtResource("13_lvxmv")
 metadata/_custom_type_script = "uid://cm8ln7ov15b25"
 
-[sub_resource type="CompositorEffect" id="CompositorEffect_uc4cm"]
-resource_local_to_scene = false
-resource_name = ""
-enabled = true
-effect_callback_type = 4
-needs_motion_vectors = false
-needs_normal_roughness = false
-script = ExtResource("10_60ayl")
-metadata/_custom_type_script = "uid://cjcd56gr47iys"
-
 [sub_resource type="Compositor" id="Compositor_nnxdf"]
-compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_6rqeb"), SubResource("CompositorEffect_qbhh2"), SubResource("CompositorEffect_uc4cm")])
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_lvxmv"), SubResource("CompositorEffect_6rqeb"), SubResource("CompositorEffect_vntac"), SubResource("CompositorEffect_qbhh2")])
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_ngllq"]
 seed = 45845
@@ -124,6 +138,15 @@ snd_shuffle = ExtResource("4_nnxdf")
 snd_joker = ExtResource("5_6rqeb")
 snd_win = ExtResource("7_60ayl")
 snd_lose = ExtResource("6_vntac")
+
+[node name="Audiopoool" type="Node3D" parent="." unique_id=106417584]
+script = ExtResource("9_re6s8")
+
+[node name="Jokersystem" type="Node3D" parent="." unique_id=826123168]
+script = ExtResource("10_p1gv3")
+
+[node name="roundmanager" type="Node3D" parent="." unique_id=368016293]
+script = ExtResource("11_isqi5")
 
 [node name="TableUI" parent="." unique_id=1213410963 instance=ExtResource("2_7tmef")]
 

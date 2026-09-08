@@ -15,6 +15,9 @@ Videojuego de Blackjack (21) en 3D, multijugador en red local, desarrollado con 
 7. [Documentación de scripts y funciones](#documentación-de-scripts-y-funciones)
    - [NetworkManager.gd](#networkmanagergd)
    - [table.gd](#tablegd)
+   - [RoundManager.gd](#roundmanagergd)
+   - [JokerSystem.gd](#jokersystemgd)
+   - [AudioPool.gd](#audiopoolgd)
    - [tableui.gd](#tableuigd)
    - [player.gd](#playergd)
    - [Dealer.gd](#dealergd)
@@ -45,6 +48,8 @@ BLACKJACK.SHOW simula una mesa de casino de Blackjack con:
 - Un sistema de **vidas/derrotas** (`player_losses`) que elimina a un jugador tras acumular cierto número de derrotas.
 - Un sistema de **comodines especiales ("Jokers")** con efectos que alteran el mazo o las derrotas de los jugadores.
 - Menús con navegación, configuración de audio (buses Master/SFX/Music/Voz) y transición de escenas.
+
+> **Nota de arquitectura:** la lógica de juego, antes concentrada por completo en `table.gd` (~750 líneas), fue refactorizada en tres clases auxiliares — `RoundManager.gd` (mazo, manos y evaluación de rondas), `JokerSystem.gd` (efectos de los 10 comodines) y `AudioPool.gd` (pooling de audio reutilizable) — que `table.gd` orquesta. Estas clases heredan de `RefCounted`, no de `Node`: no son nodos de la escena, solo objetos de datos que `table.gd` instancia con `.new()`, por lo que **no requieren ningún cambio en `Table.tscn`** ni afectan el enrutamiento de RPCs.
 
 ---
 
@@ -171,46 +176,84 @@ Gestiona toda la capa de conexión multijugador: creación de servidor, conexió
 ### `table.gd`
 **Hereda de:** `Node3D` — Controlador principal de una ronda de Blackjack (autoridad del servidor sobre la lógica del juego).
 
-Es el script más extenso del proyecto: gestiona el mazo, el reparto, los turnos, la puntuación, el sistema de vidas, los modos PvE/PvP, los comodines y el marcador 3D.
+Orquesta la ronda de Blackjack: turnos, RPCs de red, animaciones de reparto y marcador 3D. Desde la refactorización, **delega** el estado del mazo/manos/evaluación a `round_manager` (`RoundManager`), los efectos de comodín a `joker_system` (`JokerSystem`), y el audio a `sfx` (`AudioPool`) — bajó de ~750 a ~410 líneas propias.
 
 **Variables clave**
-- `deck_cards`, `hands`, `dealer_hand` — estado del mazo y las manos.
-- `active_players`, `players_done`, `player_losses`, `max_losses` — control de jugadores activos y su historial de derrotas (vidas).
-- `players_requesting_card`, `players_stood`, `players_doubled` — control de acciones por ronda.
+- `round_manager: RoundManager`, `joker_system: JokerSystem`, `sfx: AudioPool` — objetos delegados (instanciados con `.new()`, no son nodos de la escena).
+- `active_players`, `players_done`, `max_losses` — control de jugadores activos en la ronda.
+- `players_requesting_card`, `players_stood` — control de acciones/turnos de red por ronda.
 - `is_pvp_mode` — determina si la ronda se evalúa contra el dealer o entre jugadores.
 
 **Funciones principales**
 | Función | Descripción |
 |---|---|
-| `_ready()` | Inicializa el pool de audio, conecta señales de la UI y de red, posiciona los asientos de jugadores y arma el mazo si es el servidor. |
+| `_ready()` | Configura `sfx` (pool de audio) y `round_manager.max_losses`, conecta señales de la UI y de red, posiciona los asientos de jugadores y arma el mazo (vía `round_manager.build_deck()`) si es el servidor. |
 | `get_player_name(id)` | Devuelve el nombre de un jugador de forma segura (protección ante claves numéricas/string). |
-| `play_sfx(stream, randomize_pitch)` | Reproduce un efecto de sonido usando *pooling* de reproductores con variación de tono. |
+| `play_sfx(stream, randomize_pitch)` | Delega a `sfx.play(...)` — mantiene la misma firma que antes para no tocar el resto del script. |
 | `_make_dealer_look_at_random_player()` | Hace que el dealer mire aleatoriamente a un jugador activo. |
 | `_spawn_seat_visual_local(id, index)` | Instancia visualmente el asiento/personaje de un jugador y ajusta cámaras. |
 | `_position_seat(seat, index)` | Posiciona el asiento en un punto de spawn y lo orienta hacia el dealer. |
 | `update_all_cameras()` | Ajusta la cámara de cada jugador para enfocar entre su mano y el dealer. |
 | `_on_clear_pressed()` / `prepare_for_new_round()` *(RPC)* | Limpia la mesa y prepara una nueva ronda. |
-| `_on_start_pressed()` | Inicia una ronda: reparte comodines (primera ronda), construye el mazo, reparte 2 cartas a cada jugador y al dealer, revisa Blackjack automático. |
+| `_on_start_pressed()` | Inicia una ronda: reparte comodines (`joker_system.roll_starting_jokers()` en la primera ronda), construye el mazo y resetea el estado (`round_manager.build_deck()` / `reset_for_round()`), reparte 2 cartas a cada jugador y al dealer, revisa Blackjack automático. |
 | `animate_table_cleanup()` *(RPC)* | Anima al dealer recogiendo/haciendo desaparecer las cartas de la mesa entre rondas. |
-| `_build_deck()` | Construye un mazo estándar de 52 cartas y lo baraja. |
-| `deal_card(target_id, is_hidden)` | Reparte una carta a un jugador o al dealer (con opción de carta oculta / "hole card"); reconstruye el mazo si se agota. |
-| `calculate_score(hand)` | Calcula la puntuación de una mano aplicando la regla especial del As (11 u 1 según convenga). |
-| `_on_double_pressed()` / `request_double()` *(RPC)* | Lógica de "doblar apuesta": solo permitido con exactamente 2 cartas; reparte una carta adicional y termina el turno. |
-| `_on_hit_pressed()` / `request_hit()` *(RPC)* | Lógica de "pedir carta"; termina el turno automáticamente si se llega a 21 o más. |
+| `deal_card(target_id, is_hidden)` | Reparte una carta a un jugador o al dealer (con opción de carta oculta / "hole card") pidiéndola a `round_manager.deal_to_player()` / `deal_to_dealer()`, que reconstruyen el mazo automáticamente si se agota. |
+| `_on_double_pressed()` / `request_double()` *(RPC)* | Lógica de "doblar apuesta": solo permitido con exactamente 2 cartas (`round_manager.hands`); reparte una carta adicional y termina el turno. |
+| `_on_hit_pressed()` / `request_hit()` *(RPC)* | Lógica de "pedir carta" usando `round_manager.score_of(id)`; termina el turno automáticamente si se llega a 21 o más. |
 | `_on_stand_pressed()` / `request_stand()` *(RPC)* | Lógica de "plantarse". |
 | `player_finished_turn(peer_id)` | Marca a un jugador como terminado; si todos terminaron, evalúa ganadores (PvP o turno del dealer). |
 | `reveal_dealer_hole_card()` *(RPC)* | Anima el giro de la carta oculta del dealer para revelarla. |
-| `play_dealer_turn()` | El dealer pide cartas automáticamente hasta alcanzar al menos 17 puntos. |
-| `evaluate_winners_pvp()` | Evalúa la ronda en modo jugador contra jugador: determina la puntuación más alta, empates y aplica derrotas/eliminación. |
-| `evaluate_winners_pve(dealer_score)` | Evalúa la ronda en modo jugador contra la casa: compara cada mano contra el dealer y aplica resultados (gana, pierde, empata, Blackjack). |
+| `play_dealer_turn()` | El dealer pide cartas automáticamente hasta alcanzar al menos 17 puntos (`round_manager.dealer_score()`). |
+| `evaluate_winners_pvp()` / `evaluate_winners_pve()` | Piden a `round_manager.evaluate_pvp()` / `evaluate_pve()` el resultado de la ronda (ganadores, empates, eliminados) y lo pasan a `_apply_outcome()`. |
+| `_apply_outcome(outcome)` | Convierte el `Dictionary` devuelto por `round_manager` en los RPCs de resultado individual y llama a `_finalize_round(...)`. |
 | `_finalize_round(...)` | Elimina jugadores derrotados, arma el mensaje global de resultado y notifica reinicio de ronda o de partida completa. |
 | `trigger_outro_music()` | Ajusta la música para el cierre de partida. |
 | `sync_card_visual(...)` *(RPC)* | Sincroniza visualmente en todos los clientes la aparición de una carta repartida (incluye animación del dealer). |
 | `update_player_score(target_id, score)` *(RPC)* | Actualiza visualmente la puntuación de un jugador. |
 | `receive_jokers_ui(joker_list)` *(RPC)* | Envía al cliente la lista de comodines que le tocaron. |
-| `_on_joker_used(effect_id)` / `request_use_joker(effect_id)` *(RPC)* | Solicita al servidor ejecutar el efecto de un comodín. |
-| `request_use_joker` — lógica interna | Implementa los 10 efectos posibles de comodín (ver [sección de Jokers](#sistema-de-comodines-jokers)). |
-| `update_scoreboard_logic()` / `sync_scoreboard(...)` *(RPC)* | Recalcula y sincroniza los datos del marcador 3D (nombre, vidas, puntuación de cada jugador). |
+| `_on_joker_used(effect_id)` / `request_use_joker(effect_id)` *(RPC)* | Pide a `joker_system.apply(...)` el resultado del efecto y lo reenvía como `broadcast` (a todos) o `whisper` (solo al jugador) — ver [JokerSystem.gd](#jokersystemgd). |
+| `update_scoreboard_logic()` / `sync_scoreboard(...)` *(RPC)* | Recalcula (usando `round_manager`) y sincroniza los datos del marcador 3D (nombre, vidas, puntuación de cada jugador). |
+
+---
+
+### `RoundManager.gd`
+**Clase:** `RoundManager` — **Hereda de:** `RefCounted` (objeto plano, sin nodo en la escena). Contiene toda la lógica pura de reglas del Blackjack: mazo, manos, derrotas y evaluación de rondas. No conoce nada de red ni de UI — `table.gd` es quien decide qué RPC mandar con la información que este objeto le devuelve.
+
+**Variables clave**
+- `deck: Deck` — instancia de [`Deck.gd`](#deckgd) (antes sin usar; ahora es la única fuente del mazo).
+- `hands` (`Dictionary { peer_id: Array }`), `dealer_hand` (`Array`) — manos activas.
+- `player_losses` (`Dictionary { peer_id: int }`), `players_doubled` (`Array`), `max_losses` (`int`).
+
+| Función | Descripción |
+|---|---|
+| `build_deck()` | Construye y baraja un mazo estándar de 52 cartas (vía `Deck`). |
+| `reset_for_round(active_players)` | Limpia manos, mano del dealer y dobles; asegura contador de derrotas para cada jugador activo. |
+| `draw_card()` | Extrae la carta superior del mazo; lo reconstruye automáticamente si está vacío. |
+| `deal_to_dealer()` / `deal_to_player(id)` | Extraen una carta y la agregan a la mano correspondiente. |
+| `calculate_score(hand)` | Calcula la puntuación de una mano aplicando la regla especial del As (11 u 1 según convenga). |
+| `score_of(id)` / `dealer_score()` | Atajos de `calculate_score` sobre la mano de un jugador o del dealer. |
+| `evaluate_pve(active_players)` | Evalúa la ronda contra el dealer: Blackjack, bust, gana/pierde/empata, y marca eliminados al llegar a `max_losses`. Devuelve `{results, winners, ties, eliminated, default_msg}`. |
+| `evaluate_pvp(active_players)` | Evalúa la ronda entre jugadores: determina la puntuación más alta, empates múltiples, y aplica el mismo esquema de derrotas/eliminación. |
+
+---
+
+### `JokerSystem.gd`
+**Clase:** `JokerSystem` — **Hereda de:** `RefCounted`. Contiene la lógica de los 10 efectos de comodín, extraída del `match effect_id` que antes vivía dentro de `table.gd`.
+
+| Función | Descripción |
+|---|---|
+| `roll_starting_jokers()` | Elige 3 comodines aleatorios (con repetición) para el inicio de la partida. |
+| `apply(effect_id, peer_id, player_name, round_manager, active_players)` | Ejecuta el efecto indicado modificando directamente el `deck`/`player_losses` de `round_manager`, y devuelve un `Dictionary` opcional con `"broadcast"` (mensaje para todos) y/o `"whisper"` (mensaje solo para quien usó el comodín) — ver [tabla de efectos](#sistema-de-comodines-jokers). |
+
+---
+
+### `AudioPool.gd`
+**Clase:** `AudioPool` — **Hereda de:** `RefCounted`. Pool de reproductores de audio reutilizable (round-robin) para reproducir varios efectos de sonido simultáneos sin cortar el anterior. Elimina la duplicación que antes existía entre `table.gd`, `MenuUi.gd` y `tableui.gd`.
+
+| Función | Descripción |
+|---|---|
+| `setup(template, pool_size)` | Registra un reproductor ya presente en la escena (`AudioStreamPlayer`, `AudioStreamPlayer2D` o `AudioStreamPlayer3D`) y crea `pool_size - 1` copias adicionales como hijos del mismo padre. |
+| `play(stream, randomize_pitch)` | Reproduce un sonido en la siguiente voz libre del pool, con variación de tono opcional (round-robin). |
 
 ---
 
@@ -284,7 +327,7 @@ Es el script más extenso del proyecto: gestiona el mazo, el reparto, los turnos
 ---
 
 ### `Deck.gd`
-**Clase:** `Deck` — **Hereda de:** `Node`. Representa un mazo de cartas genérico (lógica reutilizable, independiente de `table.gd`, que también implementa su propia versión interna del mazo).
+**Clase:** `Deck` — **Hereda de:** `Node`. Representa un mazo de cartas genérico. Antes existía sin usarse (`table.gd` reimplementaba su propia lógica de mazo inline); desde la refactorización es la única fuente del mazo, usada internamente por [`RoundManager.gd`](#roundmanagergd).
 
 | Función | Descripción |
 |---|---|
@@ -394,7 +437,7 @@ Es el script más extenso del proyecto: gestiona el mazo, el reparto, los turnos
 
 ## Sistema de Comodines (Jokers)
 
-Al iniciar la primera ronda, cada jugador recibe **3 comodines aleatorios** (pueden repetirse) de un total de 10 efectos posibles, gestionados en `table.gd::request_use_joker()` y presentados visualmente en `tableui.gd::spawn_jokers()`:
+Al iniciar la primera ronda, cada jugador recibe **3 comodines aleatorios** (pueden repetirse) de un total de 10 efectos posibles, gestionados en [`JokerSystem.gd::apply()`](#jokersystemgd) (invocado desde `table.gd::request_use_joker()`) y presentados visualmente en `tableui.gd::spawn_jokers()`:
 
 | ID | Nombre | Efecto |
 |---|---|---|
