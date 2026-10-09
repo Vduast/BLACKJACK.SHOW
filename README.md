@@ -24,6 +24,7 @@ Videojuego de Blackjack (21) en 3D, multijugador en red local, desarrollado con 
    - [card_3d.gd](#card_3dgd)
    - [Deck.gd](#deckgd)
    - [JokerUI.gd](#jokeruigd)
+   - [JokerHand.gd](#jokerhandgd)
    - [score_board_3d.gd](#score_board_3dgd)
    - [score_board_ui.gd](#score_board_uigd)
    - [fadelayer.gd (Transition)](#fadelayergd-transition)
@@ -33,6 +34,8 @@ Videojuego de Blackjack (21) en 3D, multijugador en red local, desarrollado con 
 8. [Sistema de Comodines (Jokers)](#sistema-de-comodines-jokers)
 9. [Sistema de red (Multijugador)](#sistema-de-red-multijugador)
 10. [Shaders y efectos visuales](#shaders-y-efectos-visuales)
+11. [Cambios recientes y notas conocidas](#cambios-recientes-y-notas-conocidas)
+
 ---
 
 ## Descripción general
@@ -46,10 +49,12 @@ BLACKJACK.SHOW simula una mesa de casino de Blackjack con:
   - **PvE (un jugador o cooperativo contra la casa):** los jugadores compiten contra el dealer.
   - **PvP (jugador contra jugador):** cuando hay más de un jugador conectado, compiten entre ellos por la puntuación más alta.
 - Un sistema de **vidas/derrotas** (`player_losses`) que elimina a un jugador tras acumular cierto número de derrotas.
-- Un sistema de **comodines especiales ("Jokers")** con efectos que alteran el mazo o las derrotas de los jugadores.
+- Un sistema de **16 comodines especiales ("Jokers")** con efectos que alteran el mazo o las derrotas de los jugadores (algunos se comportan distinto en PvE y PvP), mostrados como una **mano en abanico animada** en la esquina inferior derecha de la pantalla.
 - Menús con navegación, configuración de audio (buses Master/SFX/Music/Voz) y transición de escenas.
 
-> **Nota de arquitectura:** la lógica de juego, antes concentrada por completo en `table.gd` (~750 líneas), fue refactorizada en tres clases auxiliares — `RoundManager.gd` (mazo, manos y evaluación de rondas), `JokerSystem.gd` (efectos de los 10 comodines) y `AudioPool.gd` (pooling de audio reutilizable) — que `table.gd` orquesta. Estas clases heredan de `RefCounted`, no de `Node`: no son nodos de la escena, solo objetos de datos que `table.gd` instancia con `.new()`, por lo que **no requieren ningún cambio en `Table.tscn`** ni afectan el enrutamiento de RPCs.
+> **Nota de arquitectura:** la lógica de juego, antes concentrada por completo en `table.gd` (~750 líneas), fue refactorizada en tres clases auxiliares — `RoundManager.gd` (mazo, manos y evaluación de rondas), `JokerSystem.gd` (efectos de los 16 comodines) y `AudioPool.gd` (pooling de audio reutilizable) — que `table.gd` orquesta (hoy ronda las ~570 líneas). Estas clases heredan de `RefCounted`, no de `Node`: no son nodos de la escena, solo objetos de datos que `table.gd` instancia con `.new()`, por lo que **no requieren ningún cambio en `Table.tscn`** ni afectan el enrutamiento de RPCs.
+>
+> La interfaz de los comodines sigue el mismo criterio: `JokerHand.gd` (la mano en abanico) se crea **por código** desde `tableui.gd` y oculta el antiguo contenedor `JokersContainer`, así que tampoco requiere cambios en `table_ui.tscn`.
 
 ---
 
@@ -64,7 +69,7 @@ BLACKJACK.SHOW simula una mesa de casino de Blackjack con:
 | Gráficos | Shaders personalizados (`dissolve_card.gdshader`), materiales 3D, `SubViewport` para renderizar UI 2D sobre mallas 3D |
 | Audio | Sistema de *pooling* de reproductores de sonido, buses de audio configurables (Master, SFX, Music, Voz) |
 
-Visualmente, el juego apunta a una **estética retro/VHS de casino ochentero**: usa un pipeline de post-procesado con efectos de VHS, distorsión de lente, nitidez y corrección de color (addon `godot_retro`), un addon `crt` adicional, reducción de profundidad de color estilo PS1 (`color_grade.gdshader`), niebla volumétrica y shaders "sucios/vintage" (mugre, desgaste de papel) aplicados a fondos, mesa y elementos de UI.
+Visualmente, el juego apunta a una **estética retro/VHS de casino ochentero**: usa un pipeline de post-procesado del addon `godot_retro` (VHS y corrección de color en la mesa; VHS, distorsión de lente, nitidez y *dithering* en el menú principal), un addon `crt` adicional, reducción de profundidad de color estilo PS1 (`color_grade.gdshader`), niebla volumétrica y shaders "sucios/vintage" (mugre, desgaste de papel) aplicados a fondos, mesa y elementos de UI.
 
 ---
 
@@ -72,20 +77,34 @@ Visualmente, el juego apunta a una **estética retro/VHS de casino ochentero**: 
 
 ```
 BLACKJACK.SHOW/
-├── Animations/        # Animaciones de personajes/objetos
-├── Menus/              # Escenas de menú (MainMenu, etc.)
-├── Objetos/            # Escenas de objetos instanciables (Player.tscn, Card3D.tscn, Table.tscn, JokerUI.tscn, etc.)
-├── Scripts/            # Lógica en GDScript (ver documentación abajo)
-├── addons/              # Complementos/plugins de Godot
-├── models/              # Modelos 3D y fuentes
-├── shaders/             # Shaders personalizados (ej. dissolve_card.gdshader)
-├── sounds/              # Efectos de sonido y música
-├── textures/            # Texturas (incluye símbolos de palos: hearts, diamonds, clubs, spades)
-├── project.godot        # Configuración principal del proyecto Godot
-├── Blackjack.apk.idsig   # Firma de compilación Android
-├── Blackjack.pck         # Paquete de recursos exportado
-└── Blackjack.zip         # Build empaquetado
+├── Animations/              # Animaciones de personajes/objetos
+├── Menus/                   # Escenas de menú y HUD (MainMenu.tscn, table_ui.tscn, lobby.tscn, fadelayer.tscn), fadelayer.gd y sus shaders
+├── Objetos/                 # Escenas instanciables (Table.tscn, Player.tscn, Card3D.tscn, JokerUI.tscn, dealer.tscn, score_board_3d.tscn...),
+│                            #   score_board_3d.gd / score_board_ui.gd y sus shaders (Card3D, JokerUI, Table, FONDO, ground)
+├── Scripts/                 # Lógica en GDScript
+│   ├── table.gd             #   Orquestador de la ronda (RPCs, turnos, animaciones de reparto)
+│   ├── RoundManager.gd      #   Mazo, manos y evaluación de rondas (RefCounted)
+│   ├── JokerSystem.gd       #   Efectos de los 16 comodines (RefCounted)
+│   ├── AudioPool.gd         #   Pool de audio reutilizable (RefCounted)
+│   ├── tableui.gd           #   HUD de la partida + integración de la mano de comodines
+│   ├── JokerHand.gd         #   Mano de comodines en abanico (Control, creada por código)
+│   ├── JokerUI.gd           #   Carta individual de comodín (Button)
+│   ├── NetworkManager.gd    #   Autoload de red multijugador
+│   ├── MenuUi.gd, lobbyui.gd, PantallaInteractiva.gd
+│   └── player.gd, Dealer.gd, card_3d.gd, Deck.gd
+├── addons/                  # godot_retro (efectos de compositor), crt, script-ide
+├── models/                  # Modelos 3D y fuentes
+├── shaders/                 # dissolve_card, color_grade, stylized, suitshaders, temas (TemaJuego.tres, Menus.tres)...
+├── sounds/                  # Efectos de sonido y música
+├── textures/                # Texturas (incluye símbolos de palos: hearts, diamonds, clubs, spades)
+├── default_bus_layout.tres  # Buses de audio (Master, SFX, Music, Voz)
+├── export_presets.cfg       # Presets de exportación
+├── project.godot            # Configuración principal del proyecto Godot
+├── test.tscn, icon.svg, tv_mp_1.mtl
+└── Blackjack.apk.idsig / Blackjack.pck / Blackjack.zip   # Firma Android, paquete de recursos y build empaquetado
 ```
+
+> Los archivos `*.tmp` que aparecen en `Objetos/` (por ejemplo `Table.tscn…tmp` o `JokerUI.tscn…tmp`) son temporales que Godot deja al guardar escenas; no forman parte del juego y pueden borrarse.
 
 ---
 
@@ -124,10 +143,10 @@ El proyecto define 4 autoloads globales (accesibles desde cualquier script sin n
 1. **Menú principal (`MenuUi.gd`)**: el jugador elige entre un jugador o multijugador, configura su nombre, aloja o se une a una partida mediante un código de sala, y ajusta configuraciones de audio.
 2. **Conexión de red (`NetworkManager.gd`)**: gestiona la creación del servidor/host o la conexión como cliente, sincroniza la lista de jugadores y soporta **migración de host** si el anfitrión se desconecta.
 3. **Lobby (`lobbyui.gd` / parte de `MenuUi.gd`)**: muestra el código de sala y los jugadores conectados; el host inicia la partida.
-4. **Mesa de juego (`table.gd` + `tableui.gd`)**: controla toda la lógica de una ronda de Blackjack — construir y barajar el mazo, repartir cartas, turnos de Hit/Stand/Double, cálculo de puntuación, uso de comodines, evaluación de ganadores (PvE o PvP), y actualización de un marcador 3D.
+4. **Mesa de juego (`table.gd` + `tableui.gd`)**: controla toda la lógica de una ronda de Blackjack (con las reglas en `RoundManager.gd` y los comodines en `JokerSystem.gd`) — construir y barajar el mazo, repartir cartas, turnos de Hit/Stand/Double, cálculo de puntuación, uso de comodines, evaluación de ganadores (PvE o PvP), y actualización de un marcador 3D.
 5. **Visualización de cartas (`card_3d.gd`, `Deck.gd`)**: genera visualmente cada carta (rango, palo, símbolos) y aplica animaciones de aparición/desaparición mediante shader.
 6. **Dealer (`Dealer.gd`)**: anima brazos, cabeza (mirar al jugador activo) y "habla" del crupier durante el reparto y los anuncios.
-7. **Comodines (`JokerUI.gd`)**: cada jugador recibe 3 comodines al inicio de la partida con efectos únicos que pueden usar una vez por comodín.
+7. **Comodines (`JokerSystem.gd`, `JokerHand.gd`, `JokerUI.gd`)**: cada jugador recibe 3 comodines al inicio de la partida (de 16 posibles) con efectos únicos que puede usar una vez por comodín. `JokerSystem` aplica el efecto en el servidor; `JokerHand` y `JokerUI` los muestran como cartas en abanico con animaciones de entrada, hover, giro y quemado.
 
 ---
 
@@ -176,7 +195,7 @@ Gestiona toda la capa de conexión multijugador: creación de servidor, conexió
 ### `table.gd`
 **Hereda de:** `Node3D` — Controlador principal de una ronda de Blackjack (autoridad del servidor sobre la lógica del juego).
 
-Orquesta la ronda de Blackjack: turnos, RPCs de red, animaciones de reparto y marcador 3D. Desde la refactorización, **delega** el estado del mazo/manos/evaluación a `round_manager` (`RoundManager`), los efectos de comodín a `joker_system` (`JokerSystem`), y el audio a `sfx` (`AudioPool`) — bajó de ~750 a ~410 líneas propias.
+Orquesta la ronda de Blackjack: turnos, RPCs de red, animaciones de reparto y marcador 3D. Desde la refactorización, **delega** el estado del mazo/manos/evaluación a `round_manager` (`RoundManager`), los efectos de comodín a `joker_system` (`JokerSystem`), y el audio a `sfx` (`AudioPool`) — bajó de ~750 a ~570 líneas propias.
 
 **Variables clave**
 - `round_manager: RoundManager`, `joker_system: JokerSystem`, `sfx: AudioPool` — objetos delegados (instanciados con `.new()`, no son nodos de la escena).
@@ -238,17 +257,21 @@ Orquesta la ronda de Blackjack: turnos, RPCs de red, animaciones de reparto y ma
 ---
 
 ### `JokerSystem.gd`
-**Clase:** `JokerSystem` — **Hereda de:** `RefCounted`. Contiene la lógica de los 10 efectos de comodín, extraída del `match effect_id` que antes vivía dentro de `table.gd`.
+**Clase:** `JokerSystem` — **Hereda de:** `RefCounted`. Contiene la lógica de los **16 efectos de comodín**, extraída del `match effect_id` que antes vivía dentro de `table.gd`. Lee de `round_manager` el mazo (`deck.cards`), `player_losses` y `max_losses` (5 si no existe).
+
+**Constante:** `JOKER_TYPES` — los 16 IDs posibles: `burn`, `peek`, `shield`, `shuffle`, `prophecy`, `sabotage`, `curse`, `salvation`, `bury`, `expose`, `ace`, `low_blow`, `roulette`, `vampire`, `mirror`, `famine`.
 
 | Función | Descripción |
 |---|---|
-| `roll_starting_jokers()` | Elige 3 comodines aleatorios (con repetición) para el inicio de la partida. |
-| `apply(effect_id, peer_id, player_name, round_manager, active_players)` | Ejecuta el efecto indicado modificando directamente el `deck`/`player_losses` de `round_manager`, y devuelve un `Dictionary` opcional con `"broadcast"` (mensaje para todos) y/o `"whisper"` (mensaje solo para quien usó el comodín) — ver [tabla de efectos](#sistema-de-comodines-jokers). |
+| `roll_starting_jokers(count = 3)` | Devuelve un `Array[String]` con `count` comodines aleatorios (con repetición) para el inicio de la partida. |
+| `apply(effect_id, peer_id, player_name, round_manager, active_players)` | Ejecuta el efecto indicado modificando directamente el mazo o `player_losses` de `round_manager`, y devuelve un `Dictionary` con `"broadcast"` (mensaje para todos) y/o `"whisper"` (mensaje solo para quien usó el comodín). Devuelve `{}` si el efecto no aplica (mazo vacío, ID desconocido, etc.). Considera **PvP** cuando hay más de un jugador activo (`active_players.size() > 1`) y crea `player_losses[peer_id] = 0` si aún no existía. Ver [tabla de efectos](#sistema-de-comodines-jokers). |
+
+> **Nota:** los mensajes de *Maldición* y *Vampirismo* intentan resolver el nombre de la víctima con `round_manager.get_player_name`, un miembro que `RoundManager` no define; por eso hoy se muestra el texto de respaldo `Player <id>`.
 
 ---
 
 ### `AudioPool.gd`
-**Clase:** `AudioPool` — **Hereda de:** `RefCounted`. Pool de reproductores de audio reutilizable (round-robin) para reproducir varios efectos de sonido simultáneos sin cortar el anterior. Elimina la duplicación que antes existía entre `table.gd`, `MenuUi.gd` y `tableui.gd`.
+**Clase:** `AudioPool` — **Hereda de:** `RefCounted`. Pool de reproductores de audio reutilizable (round-robin) para reproducir varios efectos de sonido simultáneos sin cortar el anterior. Hoy lo usa `table.gd`; `MenuUi.gd` mantiene todavía su propio pool inline (`sfx_pool` / `play_sfx`) y es candidato a migrar a esta clase.
 
 | Función | Descripción |
 |---|---|
@@ -267,16 +290,22 @@ Orquesta la ronda de Blackjack: turnos, RPCs de red, animaciones de reparto y ma
 | Función | Descripción |
 |---|---|
 | `_ready()` | Conecta botones a sus señales, inicializa sliders de audio y aplica animaciones "juice" a los botones. |
-| `_apply_button_juice(node)` / `_animate_button_hover(btn, is_hovered)` | Aplica un efecto de escalado suave al pasar el ratón sobre cualquier botón de la UI. |
+| `_apply_button_juice(node)` / `_animate_button_hover(btn, is_hovered)` | Aplica un efecto de escalado suave al pasar el ratón sobre cualquier botón de la UI (el pivote se calcula en el momento del hover, porque en `_ready()` los botones ocultos miden 0). |
 | `_on_open_menu_pressed()` / `_on_continue_pressed()` / `_on_settings_pressed()` / `_on_back_pressed()` / `_on_exit_pressed()` | Navegación del menú de pausa superpuesto (incluye salir a menú principal y limpiar la sesión de red). |
 | `_on_master_volume_changed` / `_on_sfx_volume_changed` / `_on_music_volume_changed` / `_on_voz_volume_changed` | Controlan el volumen de los buses de audio correspondientes. |
 | `set_status(text)` | Cambia el texto de estado en pantalla. |
 | `transition_to_game(message)` | Muestra el panel de juego y oculta los botones de inicio/limpieza. |
 | `show_start_button(text)` / `hide_start_button()` / `show_clear_button()` / `hide_clear_button()` / `hide_game_panel()` | Controlan la visibilidad de elementos de la interfaz según el estado de la partida. |
-| `spawn_jokers(joker_ids)` | Instancia los botones de comodín asignados al jugador, con nombre y descripción de cada efecto. |
-| `_on_joker_selected(joker)` | Selecciona un comodín, gira su tarjeta para mostrar la descripción y despliega la caja de confirmación. |
-| `_on_joker_canceled()` | Cancela la selección de un comodín. |
-| `_on_joker_confirmed()` | Confirma el uso del comodín seleccionado, dispara su animación de "quemado" y notifica al servidor. |
+| `_setup_joker_hand()` | Crea por código la `JokerHand`, la inserta justo después del antiguo `JokersContainer` (así queda **debajo** del menú de pausa), oculta ese contenedor y conecta su señal `joker_selected`. |
+| `_setup_joker_action_box()` | Si `COMPACT_ACTION_BUTTONS` es `true`, hace más compactos los botones USAR/CANCELAR (170×64 y 230×64) para que quepan bajo la carta elegida. |
+| `spawn_jokers(joker_ids)` | Vacía la mano (`clear_hand()`), instancia un `JokerUI` por cada ID, lo configura con el nombre y la descripción de `JOKER_INFO` y lo agrega con `joker_hand.add_joker(btn, 0.25 + i * 0.16)` (entrada escalonada). |
+| `_on_joker_selected(joker)` | Si se pulsa la carta ya elegida, la deselecciona; si no, la saca de la mano con `joker_hand.select(joker)` y muestra la caja de acciones. |
+| `_on_joker_canceled()` | Devuelve la carta a la mano (`joker_hand.deselect()`) y oculta la caja de acciones. |
+| `_on_joker_confirmed()` | Emite `joker_used(effect_id)` para avisar al servidor, quema la carta con `joker_hand.consume_selected()` y oculta la caja de acciones. |
+| `_unhandled_input(event)` | La tecla `Esc` (`ui_cancel`) cancela la carta elegida. |
+| `_dock_action_box()` / `_show_action_box()` / `_hide_action_box()` | Acoplan la caja USAR/CANCELAR justo debajo de la carta elegida (limitada al área visible) y la animan con *pop-in* / *pop-out* (escala + opacidad). |
+
+**Variables y constantes de comodines:** `joker_hand: JokerHand`, `selected_joker: JokerUI`, `COMPACT_ACTION_BUTTONS` y `JOKER_INFO` (nombre y descripción mostrados de los 16 comodines).
 
 ---
 
@@ -338,17 +367,63 @@ Orquesta la ronda de Blackjack: turnos, RPCs de red, animaciones de reparto y ma
 ---
 
 ### `JokerUI.gd`
-**Clase:** `JokerUI` — **Hereda de:** `Button`. Representa visualmente un comodín individual y sus animaciones.
+**Clase:** `JokerUI` — **Hereda de:** `Button`. Representa una carta de comodín individual (320×420 px). No se coloca sola: [`JokerHand`](#jokerhandgd) le indica la pose a la que debe ir (`set_pose`) y la carta se interpola hacia ella.
 
-**Señal:** `joker_selected(nodo_carta)`
+**Señales:** `joker_selected(nodo_carta)` y `burn_started(nodo_carta)` (se emite al empezar a arder, para que `JokerHand` la saque de la mano).
+
+**Estado:** `mi_efecto`, `titulo`, `descripcion`, `is_burning`, `is_animating_entrance`, `is_flipping`, `is_hovered`, `is_picked`, `flip_scale_x` y `current_scale`.
 
 | Función | Descripción |
 |---|---|
-| `setup(effect_id, nombre_mostrar, desc)` | Configura el identificador de efecto, título y descripción del comodín, aplicando estilos de fuente y color. |
-| `_pressed()` | Emite la señal `joker_selected` al pulsar el botón. |
+| `_ready()` | Fija el tamaño (320×420) y el pivote en el centro, y lo actualiza si la carta se redimensiona. |
+| `_process(delta)` | Suaviza (`lerp` con factor `delta * 14`) posición, rotación y escala hacia la pose objetivo, respetando el giro (`flip_scale_x`). Se suspende mientras la carta entra volando o arde. |
+| `setup(effect_id, nombre_mostrar, desc)` | Configura el identificador de efecto, título y descripción, aplicando fuente, tamaño y texto negro en todos los estados. |
+| `_pressed()` | Emite `joker_selected` solo si `can_interact()` es verdadero. |
+| `can_interact()` | `true` si la carta no arde, no está entrando y no está deshabilitada. |
+| `set_pose(target_pos, target_rot, target_sc)` | Fija la pose objetivo. `target_pos` es el **centro** de la carta (internamente se resta el pivote). |
+| `set_hover(hovered)` / `set_picked(picked)` | Marcan si la carta está señalada o elegida. |
+| `set_dimmed(dimmed)` | Oscurece (gris 0.45) o restaura el color de la carta con un *tween* de 0.2 s; se usa en las cartas no elegidas. |
+| `appear(delay, start_pos, duration = 0.7)` | Animación de entrada: tras `delay`, la carta vuela desde `start_pos` (fuera de pantalla) girando y creciendo hasta su pose. |
 | `girar_a_descripcion()` | Anima un giro 3D (escala en X) para mostrar la descripción del comodín. |
 | `girar_a_titulo()` | Anima el giro inverso para volver a mostrar el título. |
-| `quemar_y_destruir()` | Anima un efecto de "quemado" mediante shader y destruye el nodo del comodín tras usarlo. |
+| `quemar_y_destruir()` | Emite `burn_started`, duplica el `ShaderMaterial` (para que solo arda esta carta), anima `burn_amount` hasta 1.2 en 1.5 s y luego libera el nodo. |
+
+---
+
+### `JokerHand.gd`
+**Clase:** `JokerHand` — **Hereda de:** `Control`. La "mano" de comodines: coloca las cartas [`JokerUI`](#jokeruigd) en abanico y gestiona hover, selección y reacomodo. Es un `Control` normal (no un contenedor, para poder inclinar y solapar las cartas) y `tableui.gd` lo crea **por código**; ignora el ratón (`MOUSE_FILTER_IGNORE`) para no bloquear otros botones.
+
+**Posiciones (referencia 1920×1080, relativas al tamaño de la ventana):**
+- **Mano en reposo:** abanico en la esquina inferior derecha (márgenes `margin_right` / `margin_bottom`), lejos de los botones Pedir/Plantarse/Doblar.
+- **Carta elegida:** sale del abanico y se muestra ampliada en `showcase_anchor` (73 % del ancho, 44 % del alto); los botones USAR/CANCELAR se acoplan justo debajo.
+
+**Señal:** `joker_selected(joker)`.
+
+**Parámetros `@export` (valores actuales):**
+
+| Parámetro | Valor | Efecto |
+|---|---|---|
+| `card_size` | `(320, 420)` | Tamaño base de cada carta. |
+| `rest_scale` / `hover_scale` / `select_scale` | `1.15` / `1.35` / `1.85` | Escala en reposo, con el cursor encima y cuando está elegida. |
+| `fan_spacing` | `260` | Separación horizontal entre cartas. |
+| `fan_angle_deg` / `fan_arc` | `8.5` / `20` | Inclinación y curvatura del abanico. |
+| `hover_lift` / `hover_push` | `110` / `70` | Cuánto sube la carta señalada y cuánto se apartan sus vecinas. |
+| `margin_right` / `margin_bottom` | `110` / `120` | Distancia a los bordes derecho e inferior. |
+| `showcase_anchor` | `(0.73, 0.44)` | Posición relativa donde se muestra la carta elegida. |
+
+| Función | Descripción |
+|---|---|
+| `add_joker(joker, delay = 0.0)` | Agrega una carta ya configurada, conecta sus señales y lanza su animación de entrada (`appear`) desde fuera de la pantalla, abajo a la derecha. |
+| `clear_hand()` | Libera todas las cartas y reinicia hover y selección. |
+| `get_selected()` | Devuelve la carta elegida (o `null`). |
+| `get_showcase_center()` | Centro, en coordenadas de la mano, donde se muestra la carta elegida (lo usa `tableui.gd` para acoplar USAR/CANCELAR). |
+| `select(joker)` | Saca la carta del abanico, la gira para mostrar la descripción y oscurece las demás. |
+| `deselect()` | Devuelve la carta elegida al abanico y la gira de vuelta al título. |
+| `consume_selected()` | Quema la carta elegida con `quemar_y_destruir()`; las restantes se reacomodan solas. |
+| `_process(delta)` | Cada fotograma actualiza el hover y las poses objetivo de todas las cartas. |
+| `_update_targets()` | Calcula la pose de cada carta: abanico en reposo, carta señalada (sube, se endereza y crece; las vecinas se apartan) y carta elegida en el escaparate. |
+| `_update_hover()` / `_pick_hovered()` / `_hover_allowed()` | Hover **estable**: se decide con una "casilla" fija por carta (no con su rectángulo, que se mueve al subir) más 14 px de histéresis; se bloquea si otro control —por ejemplo el menú de pausa— está encima. |
+| `_reorder()` | Ordena los hijos para que la carta señalada y la elegida se dibujen encima (no usa `z_index`, para no tapar el menú de pausa). |
 
 ---
 
@@ -437,22 +512,50 @@ Orquesta la ronda de Blackjack: turnos, RPCs de red, animaciones de reparto y ma
 
 ## Sistema de Comodines (Jokers)
 
-Al iniciar la primera ronda, cada jugador recibe **3 comodines aleatorios** (pueden repetirse) de un total de 10 efectos posibles, gestionados en [`JokerSystem.gd::apply()`](#jokersystemgd) (invocado desde `table.gd::request_use_joker()`) y presentados visualmente en `tableui.gd::spawn_jokers()`:
+Al iniciar la primera ronda, cada jugador recibe **3 comodines aleatorios** (pueden repetirse) de un total de **16 efectos posibles**. `table.gd::request_use_joker()` pide a [`JokerSystem.gd::apply()`](#jokersystemgd) que ejecute el efecto en el servidor, y la interfaz los muestra con [`JokerHand.gd`](#jokerhandgd) y [`JokerUI.gd`](#jokeruigd) (nombres y descripciones en `tableui.gd::JOKER_INFO`).
 
-| ID | Nombre | Efecto |
-|---|---|---|
-| `burn` | 🔥 Quemar | Destruye la carta en la cima del mazo. |
-| `peek` | 👁️ Visión | Revela en secreto (solo al usuario) la siguiente carta del mazo. |
-| `shield` | 🛡️ Amnesia | Elimina 1 derrota del historial propio. |
-| `shuffle` | 🔄 Mezclar | Baraja todo el mazo nuevamente. |
-| `prophecy` | 🔮 Profecía | Revela en secreto las siguientes 3 cartas del mazo. |
-| `sabotage` | 💣 Sabotaje | Coloca una carta "10 de picas" en la cima del mazo. |
-| `curse` | ☠️ Maldición | Suma +1 derrota a todos los demás jugadores activos. |
-| `salvation` | 👼 Salvación | Elimina hasta 2 derrotas del historial propio de golpe. |
-| `bury` | 🕳️ Enterrar | Mueve la carta superior del mazo hasta el fondo. |
-| `expose` | 🚨 Exponer | Revela públicamente (a todos) la siguiente carta del mazo. |
+Cada efecto devuelve un mensaje **público** (lo ven todos) o **privado** (solo quien lo usa). Los efectos marcados con *PvP/PvE* dependen de si hay más de un jugador activo.
 
-Cada comodín solo puede usarse una vez; al confirmarse su uso, se destruye visualmente mediante la animación `quemar_y_destruir()`.
+**Control e información del mazo**
+
+| ID | Nombre | Efecto | Mensaje |
+|---|---|---|---|
+| `peek` | 👁️ Visión | Revela en secreto la siguiente carta del mazo (rango y palo). | Privado |
+| `prophecy` | 🔮 Profecía | Revela en secreto los rangos de las siguientes 3 cartas (requiere al menos 3 en el mazo). | Privado |
+| `expose` | 🚨 Exponer | Revela públicamente la carta de la cima del mazo. | Público |
+| `burn` | 🔥 Quemar | Destruye la carta de la cima del mazo. | Público |
+| `bury` | 🕳️ Enterrar | Manda la carta de la cima al fondo del mazo. | Público |
+| `shuffle` | 🔄 Mezclar | Baraja de nuevo todo el mazo. | Público |
+| `famine` | 🌪️ Hambruna | Quema de golpe las 2 próximas cartas (o las que queden). | Público |
+
+**Inyección de cartas en la cima del mazo**
+
+| ID | Nombre | Efecto | Mensaje |
+|---|---|---|---|
+| `sabotage` | 💣 Sabotaje | Coloca un 10 de picas arriba (ideal para hacer reventar al siguiente). | Público |
+| `ace` | 🃏 As Oculto | Coloca un As de picas (vale 1 u 11) arriba. | Público |
+| `low_blow` | 🩸 Golpe Bajo | Coloca un 2 de corazones arriba, útil para afinar un 21. | Público |
+| `mirror` | 🪞 Espejo | Duplica la carta de la cima (las dos próximas cartas serán iguales). | Público |
+
+**Vidas y castigos**
+
+| ID | Nombre | Efecto | Mensaje |
+|---|---|---|---|
+| `shield` | 🛡️ Amnesia | Cura 1 derrota si se tiene alguna; si no, avisa de que no hay nada que curar. | Privado |
+| `salvation` | 👼 Salvación | Con 3 o más derrotas cura 2; con 1 o 2 cura solo 1; sin derrotas no hace nada. | Público (≥ 3 derrotas) / Privado |
+| `curse` | ☠️ Maldición | **PvP:** +1 derrota al rival con menos derrotas (el líder). **PvE:** coloca un 10 arriba para el Dealer. | Público |
+| `vampire` | 🧛 Vampirismo | **PvP:** elige al rival con menos derrotas; si quien lo usa tiene derrotas, transfiere 1 hacia ese rival, y si no tiene ninguna, solo le causa 1. **PvE:** cura 1 derrota propia si la tiene. | Público (PvP) / Privado (PvE) |
+| `roulette` | 🎲 Ruleta | 50 % de sumar 1 derrota y 50 % de quitar 1 (mínimo 0). | Público |
+
+Cada comodín solo puede usarse una vez; al confirmarse su uso se destruye visualmente con la animación `quemar_y_destruir()`.
+
+### Interfaz de la mano de comodines
+
+1. `table.gd` envía la lista de IDs al cliente (`receive_jokers_ui`) y `tableui.gd::spawn_jokers()` crea las cartas, que **vuelan desde fuera de la pantalla** una tras otra y se acomodan en abanico abajo a la derecha.
+2. **Hover:** la carta señalada sube, se endereza y crece, y sus vecinas se apartan.
+3. **Selección:** al pulsar una carta sale del abanico y se muestra grande, gira para mostrar su descripción y las demás se oscurecen; **USAR** y **CANCELAR** aparecen justo debajo de ella.
+4. **Cancelar:** botón CANCELAR, tecla `Esc` o volver a pulsar la misma carta; la carta regresa al abanico y vuelve a mostrar su título.
+5. **Usar:** se avisa al servidor (`joker_used` → `request_use_joker`), la carta arde con el shader de quemado y las cartas restantes se reacomodan para cerrar el hueco.
 
 ---
 
@@ -483,9 +586,24 @@ El proyecto usa un número considerable de shaders personalizados (`.gdshader`) 
 | `MainMenu.gdshader` | Spatial | Material de pared/fondo del menú principal con relieve procedural, mugre y desgaste. |
 
 Además, el proyecto integra dos addons de efectos visuales:
-- **`addons/godot_retro`**: efectos de compositor (`vhs_effect.gd`, `lens_distortion_effect.gd`, `sharpness_effect.gd`, `color_correction_effect.gd`) aplicados como post-procesado global sobre la cámara 3D.
+- **`addons/godot_retro`**: biblioteca de efectos de compositor (VHS, distorsión de lente, nitidez, corrección de color, *dithering*, CRT, grano, *glitch*, posterización, etc.). Los activos hoy son: `MainMenu.tscn` → `vhs_effect`, `lens_distortion_effect`, `sharpness_effect` y `dithering_effect`; `Table.tscn` → `vhs_effect` y `color_correction_effect` (la distorsión de lente se retiró de la mesa).
 - **`addons/crt`**: efecto adicional de pantalla tipo monitor CRT.
 
 Estos efectos, combinados con la niebla volumétrica configurada en el `WorldEnvironment` de la mesa (`Table.tscn`), conforman la dirección de arte general del juego: una mesa de casino con aspecto de transmisión de TV retro/VHS.
 
 ---
+
+---
+
+## Cambios recientes y notas conocidas
+
+**Cambios recientes**
+- **Refactor de `table.gd`:** el estado y las reglas pasaron a `RoundManager.gd`, los comodines a `JokerSystem.gd` y el audio a `AudioPool.gd`; `Deck.gd` ahora es la única fuente del mazo.
+- **De 10 a 16 comodines:** nuevos `ace`, `low_blow`, `mirror`, `famine`, `vampire` y `roulette`; además `shield`, `salvation` y `curse` se rebalancearon (Maldición y Vampirismo se comportan distinto en PvE y PvP) y los mensajes de los efectos pasaron a español.
+- **Nueva mano de comodines en abanico:** `JokerHand.gd` (nuevo) y `JokerUI.gd` reescrito; `tableui.gd` integra la mano, acopla USAR/CANCELAR bajo la carta elegida y permite cancelar con `Esc`.
+- **Efectos visuales:** `Table.tscn` ya no aplica la distorsión de lente (el efecto sigue disponible en el addon y en `MainMenu.tscn`).
+
+**Notas conocidas**
+- `MenuUi.gd` aún mantiene su propio pooling de audio en lugar de usar `AudioPool`.
+- Los nombres de las víctimas de *Maldición* y *Vampirismo* se muestran como `Player <id>` (ver nota en [JokerSystem.gd](#jokersystemgd)).
+- Al confirmar un comodín, la carta arde en el cliente de inmediato; si el servidor rechaza el efecto (por ejemplo, durante el reparto), la carta ya se consumió.
