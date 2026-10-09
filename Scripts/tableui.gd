@@ -15,7 +15,7 @@ signal double_pressed
 @onready var stand_button = $UI/GamePanel/StandButton
 @onready var double_button = $UI/GamePanel/DoubleButton 
 
-@onready var jokers_container = $UI/JokersContainer
+@onready var jokers_container = get_node_or_null("UI/JokersContainer")   # el viejo HBox: ahora solo se oculta
 @onready var joker_action_box = $UI/JokerActionBox
 @onready var btn_cancelar = $UI/JokerActionBox/BtnCancelar
 @onready var btn_usar = $UI/JokerActionBox/BtnUsar
@@ -42,7 +42,12 @@ var music_bus_idx = AudioServer.get_bus_index("Music")
 var voz_bus_idx = AudioServer.get_bus_index("Voz")
 
 var joker_scene = preload("res://Objetos/JokerUI.tscn")
-var selected_joker: Button = null
+var selected_joker: JokerUI = null
+var joker_hand: JokerHand = null            # [JOKERS] la mano en abanico (se crea por código)
+var _action_tween: Tween = null             # [JOKERS] animación de la caja USAR/CANCELAR
+
+# [JOKERS] Botones USAR/CANCELAR más compactos para que quepan bajo la carta elegida.
+const COMPACT_ACTION_BUTTONS: bool = true
 
 func _ready():
 	start_button.pressed.connect(func(): start_game.emit())
@@ -73,6 +78,9 @@ func _ready():
 	joker_action_box.hide()
 	status_label.text = "Esperando..."
 	
+	_setup_joker_hand()           # [JOKERS]
+	_setup_joker_action_box()     # [JOKERS]
+	
 	# JUICE: Animaciones de escalado (Hover) para todos los botones de la UI de juego
 	_apply_button_juice(self)
 
@@ -87,6 +95,7 @@ func _apply_button_juice(node: Node):
 			_apply_button_juice(child)
 
 func _animate_button_hover(btn: Button, is_hovered: bool):
+	btn.pivot_offset = btn.size / 2.0   # [JOKERS] antes se calculaba en _ready con tamaño 0
 	var tween = create_tween()
 	var target_scale = Vector2(1.1, 1.1) if is_hovered else Vector2(1.0, 1.0)
 	tween.tween_property(btn, "scale", target_scale, 0.1).set_trans(Tween.TRANS_SINE)
@@ -139,64 +148,127 @@ func hide_game_panel(): game_panel.hide()
 func show_clear_button(): clear_button.show()
 func hide_clear_button(): clear_button.hide()
 
+# ===================== [JOKERS] MANO, SELECCIÓN Y CAJA DE ACCIONES =====================
+
+const JOKER_INFO: Dictionary = {
+	"burn": {"n": "🔥 Quemar", "d": "Destruye la carta en la cima del mazo."},
+	"peek": {"n": "👁️ Visión", "d": "Mira en secreto la siguiente carta."},
+	"shield": {"n": "🛡️ Amnesia", "d": "Elimina 1 derrota de tu historial."},
+	"shuffle": {"n": "🔄 Mezclar", "d": "Baraja todo el mazo."},
+	"prophecy": {"n": "🔮 Profecía", "d": "Revela las siguientes 3 cartas."},
+	"sabotage": {"n": "💣 Sabotaje", "d": "Pone un '10' en la cima del mazo."},
+	"curse": {"n": "☠️ Maldición", "d": "PvP: Castiga al líder. PvE: Sabotea al Dealer."},
+	"salvation": {"n": "👼 Salvación", "d": "Cura 2 derrotas si estás en peligro crítico."},
+	"bury": {"n": "🕳️ Enterrar", "d": "Manda la carta de arriba al fondo."},
+	"expose": {"n": "🚨 Exponer", "d": "Revela públicamente la próxima carta."},
+	"ace": {"n": "🃏 As Oculto", "d": "Coloca un As (1 u 11) en la cima del mazo."},
+	"low_blow": {"n": "🩸 Golpe Bajo", "d": "Coloca un '2' en la cima para afinar tu 21."},
+	"mirror": {"n": "🪞 Espejo", "d": "Duplica la carta en la cima del mazo."},
+	"famine": {"n": "🌪️ Hambruna", "d": "Quema de golpe las 2 próximas cartas."},
+	"vampire": {"n": "🧛 Vampirismo", "d": "Transfiere 1 derrota de ti hacia un rival."},
+	"roulette": {"n": "🎲 Ruleta", "d": "50% de curar 1 derrota, 50% de recibir 1 daño."}
+}
+
+func _setup_joker_hand() -> void:
+	joker_hand = JokerHand.new()
+	joker_hand.name = "JokerHand"
+	var parent: Node = $UI
+	if jokers_container != null:
+		parent = jokers_container.get_parent()
+	parent.add_child(joker_hand)
+	joker_hand.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if jokers_container != null:
+		# Justo después del viejo contenedor: así queda DEBAJO del menú de pausa
+		parent.move_child(joker_hand, jokers_container.get_index() + 1)
+		jokers_container.hide()
+	joker_hand.joker_selected.connect(_on_joker_selected)
+
+func _setup_joker_action_box() -> void:
+	if not COMPACT_ACTION_BUTTONS:
+		return
+	joker_action_box.add_theme_constant_override("separation", 14)
+	joker_action_box.alignment = BoxContainer.ALIGNMENT_CENTER
+	btn_cancelar.custom_minimum_size = Vector2(170, 64)
+	btn_usar.custom_minimum_size = Vector2(230, 64)
+	btn_cancelar.add_theme_font_size_override("font_size", 30)
+	btn_usar.add_theme_font_size_override("font_size", 34)
+
 func spawn_jokers(joker_ids: Array):
+	if _action_tween != null and _action_tween.is_valid():
+		_action_tween.kill()
 	joker_action_box.hide()
 	selected_joker = null
+	joker_hand.clear_hand()
 	
-	for child in jokers_container.get_children():
-		child.queue_free()
-
-	var JOKER_INFO = {
-		"burn": {"n": "🔥 Quemar", "d": "Destruye la carta en la cima del mazo."},
-		"peek": {"n": "👁️ Visión", "d": "Mira en secreto la siguiente carta."},
-		"shield": {"n": "🛡️ Amnesia", "d": "Elimina 1 derrota de tu historial."},
-		"shuffle": {"n": "🔄 Mezclar", "d": "Baraja todo el mazo."},
-		"prophecy": {"n": "🔮 Profecía", "d": "Revela las siguientes 3 cartas."},
-		"sabotage": {"n": "💣 Sabotaje", "d": "Pone un '10' en la cima del mazo."},
-		"curse": {"n": "☠️ Maldición", "d": "+1 derrota a todos los demás."},
-		"salvation": {"n": "👼 Salvación", "d": "Cura 2 derrotas de golpe."},
-		"bury": {"n": "🕳️ Enterrar", "d": "Manda la carta de arriba al fondo."},
-		"expose": {"n": "🚨 Exponer", "d": "Revela públicamente la próxima carta."}
-	}
-
+	var i: int = 0
 	for j_id in joker_ids:
-		var btn = joker_scene.instantiate()
-		jokers_container.add_child(btn)
-		var info = JOKER_INFO[j_id]
+		var btn: JokerUI = joker_scene.instantiate() as JokerUI
+		var info: Dictionary = JOKER_INFO[j_id]
 		btn.setup(j_id, info["n"], info["d"])
-		btn.joker_selected.connect(_on_joker_selected)
+		joker_hand.add_joker(btn, 0.25 + float(i) * 0.16)   # entran escalonadas
+		i += 1
 
-func _on_joker_selected(joker: Button):
-	if selected_joker != null and selected_joker != joker:
-		selected_joker.girar_a_titulo()
-	
+func _on_joker_selected(joker: JokerUI):
+	# Clic en la carta ya elegida = deseleccionar
+	if joker == selected_joker:
+		_on_joker_canceled()
+		return
 	selected_joker = joker
-	selected_joker.girar_a_descripcion()
-	
-	# JUICE: Animación de pop-in fluida para la caja de acciones del comodín
-	joker_action_box.show()
-	joker_action_box.scale = Vector2(0.5, 0.5)
-	var tween = create_tween()
-	tween.tween_property(joker_action_box, "scale", Vector2(1.0, 1.0), 0.3).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	joker_hand.select(joker)    # la saca de la mano, la gira y opaca las demás
+	_show_action_box()
 
 func _on_joker_canceled():
-	if selected_joker:
-		selected_joker.girar_a_titulo()
+	if selected_joker != null:
+		joker_hand.deselect()
 		selected_joker = null
-	
-	# JUICE: Animación de ocultar fluida
-	var tween = create_tween()
-	tween.tween_property(joker_action_box, "scale", Vector2(0.1, 0.1), 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
-	await tween.finished
-	joker_action_box.hide()
+	_hide_action_box()
 
 func _on_joker_confirmed():
-	if selected_joker:
-		# Avisamos al servidor que lo usamos
-		joker_used.emit(selected_joker.mi_efecto)
-		
-		# --- ¡AQUÍ ESTÁ EL TRUCO! ---
-		# En lugar de usar queue_free(), usamos esto:
-		selected_joker.quemar_y_destruir()
-		
-		selected_joker = null
+	if selected_joker == null or not is_instance_valid(selected_joker):
+		return
+	var j: JokerUI = selected_joker
+	selected_joker = null
+	joker_used.emit(j.mi_efecto)     # avisamos al servidor
+	joker_hand.consume_selected()    # la carta arde y las demás se reacomodan
+	_hide_action_box()
+
+# Esc cancela la carta elegida
+func _unhandled_input(event: InputEvent) -> void:
+	if selected_joker != null and event.is_action_pressed("ui_cancel"):
+		_on_joker_canceled()
+		get_viewport().set_input_as_handled()
+
+# USAR / CANCELAR aparecen justo debajo de la carta elegida
+func _dock_action_box():
+	var c: Vector2 = joker_hand.get_showcase_center()
+	var half_h: float = joker_hand.card_size.y * joker_hand.select_scale * 0.5
+	var vp: Vector2 = joker_hand.get_viewport_rect().size
+	var local: Vector2 = Vector2(c.x - joker_action_box.size.x * 0.5, c.y + half_h + 18.0)
+	local.x = clampf(local.x, 12.0, vp.x - joker_action_box.size.x - 12.0)
+	local.y = minf(local.y, vp.y - joker_action_box.size.y - 12.0)
+	# Transformación de espacio local a espacio global en CanvasItem
+	joker_action_box.global_position = joker_hand.get_global_transform() * local
+
+func _show_action_box():
+	if _action_tween != null and _action_tween.is_valid():
+		_action_tween.kill()
+	joker_action_box.show()
+	joker_action_box.size = joker_action_box.get_combined_minimum_size()
+	_dock_action_box()
+	joker_action_box.pivot_offset = Vector2(joker_action_box.size.x * 0.5, 0.0)
+	joker_action_box.scale = Vector2(0.6, 0.6)
+	joker_action_box.modulate.a = 0.0
+	# Espera 0.12 s a que la carta llegue a su sitio y entonces "brota" debajo de ella
+	_action_tween = create_tween().set_parallel(true)
+	_action_tween.tween_property(joker_action_box, "scale", Vector2.ONE, 0.28).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT).set_delay(0.12)
+	_action_tween.tween_property(joker_action_box, "modulate:a", 1.0, 0.18).set_delay(0.12)
+
+func _hide_action_box():
+	if not joker_action_box.visible:
+		return
+	if _action_tween != null and _action_tween.is_valid():
+		_action_tween.kill()
+	_action_tween = create_tween().set_parallel(true)
+	_action_tween.tween_property(joker_action_box, "scale", Vector2(0.7, 0.7), 0.15).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	_action_tween.tween_property(joker_action_box, "modulate:a", 0.0, 0.15)
+	_action_tween.chain().tween_callback(joker_action_box.hide)
