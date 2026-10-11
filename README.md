@@ -35,6 +35,7 @@ Videojuego de Blackjack (21) en 3D, multijugador en red local, desarrollado con 
 9. [Sistema de red (Multijugador)](#sistema-de-red-multijugador)
 10. [Shaders y efectos visuales](#shaders-y-efectos-visuales)
 11. [Cambios recientes y notas conocidas](#cambios-recientes-y-notas-conocidas)
+12. [Pendientes](#pendientes)
 
 ---
 
@@ -49,7 +50,7 @@ BLACKJACK.SHOW simula una mesa de casino de Blackjack con:
   - **PvE (un jugador o cooperativo contra la casa):** los jugadores compiten contra el dealer.
   - **PvP (jugador contra jugador):** cuando hay más de un jugador conectado, compiten entre ellos por la puntuación más alta.
 - Un sistema de **vidas/derrotas** (`player_losses`) que elimina a un jugador tras acumular cierto número de derrotas.
-- Un sistema de **16 comodines especiales ("Jokers")** con efectos que alteran el mazo o las derrotas de los jugadores (algunos se comportan distinto en PvE y PvP), mostrados como una **mano en abanico animada** en la esquina inferior derecha de la pantalla.
+- Un sistema de **16 comodines especiales ("Jokers")** con efectos que alteran el mazo o las derrotas de los jugadores (algunos se comportan distinto en PvE y PvP), mostrados como una **mano en abanico animada** en la esquina inferior derecha de la pantalla, que se puede **ocultar y mostrar con un botón** (o con la tecla `J`) para que no estorbe.
 - Menús con navegación, configuración de audio (buses Master/SFX/Music/Voz) y transición de escenas.
 
 > **Nota de arquitectura:** la lógica de juego, antes concentrada por completo en `table.gd` (~750 líneas), fue refactorizada en tres clases auxiliares — `RoundManager.gd` (mazo, manos y evaluación de rondas), `JokerSystem.gd` (efectos de los 16 comodines) y `AudioPool.gd` (pooling de audio reutilizable) — que `table.gd` orquesta (hoy ronda las ~570 líneas). Estas clases heredan de `RefCounted`, no de `Node`: no son nodos de la escena, solo objetos de datos que `table.gd` instancia con `.new()`, por lo que **no requieren ningún cambio en `Table.tscn`** ni afectan el enrutamiento de RPCs.
@@ -146,7 +147,7 @@ El proyecto define 4 autoloads globales (accesibles desde cualquier script sin n
 4. **Mesa de juego (`table.gd` + `tableui.gd`)**: controla toda la lógica de una ronda de Blackjack (con las reglas en `RoundManager.gd` y los comodines en `JokerSystem.gd`) — construir y barajar el mazo, repartir cartas, turnos de Hit/Stand/Double, cálculo de puntuación, uso de comodines, evaluación de ganadores (PvE o PvP), y actualización de un marcador 3D.
 5. **Visualización de cartas (`card_3d.gd`, `Deck.gd`)**: genera visualmente cada carta (rango, palo, símbolos) y aplica animaciones de aparición/desaparición mediante shader.
 6. **Dealer (`Dealer.gd`)**: anima brazos, cabeza (mirar al jugador activo) y "habla" del crupier durante el reparto y los anuncios.
-7. **Comodines (`JokerSystem.gd`, `JokerHand.gd`, `JokerUI.gd`)**: cada jugador recibe 3 comodines al inicio de la partida (de 16 posibles) con efectos únicos que puede usar una vez por comodín. `JokerSystem` aplica el efecto en el servidor; `JokerHand` y `JokerUI` los muestran como cartas en abanico con animaciones de entrada, hover, giro y quemado.
+7. **Comodines (`JokerSystem.gd`, `JokerHand.gd`, `JokerUI.gd`)**: cada jugador recibe 3 comodines al inicio de la partida (de 16 posibles) con efectos únicos que puede usar una vez por comodín. `JokerSystem` aplica el efecto en el servidor; `JokerHand` y `JokerUI` los muestran como cartas en abanico con animaciones de entrada, hover, giro y quemado; la mano se puede ocultar y mostrar con un botón (o con la tecla `J`).
 
 ---
 
@@ -296,16 +297,22 @@ Orquesta la ronda de Blackjack: turnos, RPCs de red, animaciones de reparto y ma
 | `set_status(text)` | Cambia el texto de estado en pantalla. |
 | `transition_to_game(message)` | Muestra el panel de juego y oculta los botones de inicio/limpieza. |
 | `show_start_button(text)` / `hide_start_button()` / `show_clear_button()` / `hide_clear_button()` / `hide_game_panel()` | Controlan la visibilidad de elementos de la interfaz según el estado de la partida. |
-| `_setup_joker_hand()` | Crea por código la `JokerHand`, la inserta justo después del antiguo `JokersContainer` (así queda **debajo** del menú de pausa), oculta ese contenedor y conecta su señal `joker_selected`. |
+| `_setup_joker_hand()` | Crea por código la `JokerHand`, la inserta justo después del antiguo `JokersContainer` (así queda **debajo** del menú de pausa), oculta ese contenedor, conecta su señal `joker_selected` y crea el botón de ocultar/mostrar con `_setup_joker_toggle()`. |
 | `_setup_joker_action_box()` | Si `COMPACT_ACTION_BUTTONS` es `true`, hace más compactos los botones USAR/CANCELAR (170×64 y 230×64) para que quepan bajo la carta elegida. |
-| `spawn_jokers(joker_ids)` | Vacía la mano (`clear_hand()`), instancia un `JokerUI` por cada ID, lo configura con el nombre y la descripción de `JOKER_INFO` y lo agrega con `joker_hand.add_joker(btn, 0.25 + i * 0.16)` (entrada escalonada). |
+| `spawn_jokers(joker_ids)` | Vacía la mano (`clear_hand()`), instancia un `JokerUI` por cada ID, lo configura con el nombre y la descripción de `JOKER_INFO` y lo agrega con `joker_hand.add_joker(btn, 0.25 + i * 0.16)` (entrada escalonada). Antes reabre la mano (`set_collapsed(false, false)`) para que las cartas nuevas entren siempre visibles. |
 | `_on_joker_selected(joker)` | Si se pulsa la carta ya elegida, la deselecciona; si no, la saca de la mano con `joker_hand.select(joker)` y muestra la caja de acciones. |
 | `_on_joker_canceled()` | Devuelve la carta a la mano (`joker_hand.deselect()`) y oculta la caja de acciones. |
 | `_on_joker_confirmed()` | Emite `joker_used(effect_id)` para avisar al servidor, quema la carta con `joker_hand.consume_selected()` y oculta la caja de acciones. |
-| `_unhandled_input(event)` | La tecla `Esc` (`ui_cancel`) cancela la carta elegida. |
+| `_unhandled_input(event)` | `Esc` (`ui_cancel`) cancela la carta elegida; `J` oculta o muestra la mano de comodines (solo si el botón es visible y el menú de pausa no está abierto). |
 | `_dock_action_box()` / `_show_action_box()` / `_hide_action_box()` | Acoplan la caja USAR/CANCELAR justo debajo de la carta elegida (limitada al área visible) y la animan con *pop-in* / *pop-out* (escala + opacidad). |
+| `_setup_joker_toggle(parent)` | Crea por código el botón **OCULTAR JOKERS / MOSTRAR JOKERS (n)** (330×48, mismo tema que los botones del HUD, sin foco de teclado), lo coloca justo después de la mano en el árbol (encima de ella y debajo del menú de pausa) y conecta sus señales. |
+| `_on_joker_toggle_pressed()` | Alterna la mano con `joker_hand.toggle_collapsed()`. |
+| `_on_joker_hand_collapsed(collapsed)` | Si se oculta con una carta elegida (que `JokerHand` ya devolvió al abanico), limpia `selected_joker` y cierra la caja USAR/CANCELAR; después actualiza el botón. |
+| `_on_joker_hand_changed(count)` | Si la mano queda vacía estando oculta, la reabre sin animación (la siguiente partida empieza abierta) y actualiza el botón. |
+| `_update_joker_toggle()` | El botón solo es visible si hay cartas; el texto es `OCULTAR JOKERS` o `MOSTRAR JOKERS (n)` según el estado. |
+| `_dock_joker_toggle()` | Centra el botón bajo el abanico (`joker_hand.get_hand_center()`), a 40 px del borde inferior de la pantalla; se recalcula al cambiar el tamaño de la ventana. |
 
-**Variables y constantes de comodines:** `joker_hand: JokerHand`, `selected_joker: JokerUI`, `COMPACT_ACTION_BUTTONS` y `JOKER_INFO` (nombre y descripción mostrados de los 16 comodines).
+**Variables y constantes de comodines:** `joker_hand: JokerHand`, `joker_toggle: Button`, `selected_joker: JokerUI`, `COMPACT_ACTION_BUTTONS` y `JOKER_INFO` (nombre y descripción mostrados de los 16 comodines).
 
 ---
 
@@ -396,8 +403,9 @@ Orquesta la ronda de Blackjack: turnos, RPCs de red, animaciones de reparto y ma
 **Posiciones (referencia 1920×1080, relativas al tamaño de la ventana):**
 - **Mano en reposo:** abanico en la esquina inferior derecha (márgenes `margin_right` / `margin_bottom`), lejos de los botones Pedir/Plantarse/Doblar.
 - **Carta elegida:** sale del abanico y se muestra ampliada en `showcase_anchor` (73 % del ancho, 44 % del alto); los botones USAR/CANCELAR se acoplan justo debajo.
+- **Botón ocultar/mostrar:** centrado bajo el abanico, a 40 px del borde inferior (se ajusta en `tableui.gd::_dock_joker_toggle()`).
 
-**Señal:** `joker_selected(joker)`.
+**Señales:** `joker_selected(joker)`, `collapsed_changed(collapsed)` (la mano se ocultó o se mostró) y `hand_changed(count)` (cambió el número de cartas).
 
 **Parámetros `@export` (valores actuales):**
 
@@ -408,8 +416,13 @@ Orquesta la ronda de Blackjack: turnos, RPCs de red, animaciones de reparto y ma
 | `fan_spacing` | `260` | Separación horizontal entre cartas. |
 | `fan_angle_deg` / `fan_arc` | `8.5` / `20` | Inclinación y curvatura del abanico. |
 | `hover_lift` / `hover_push` | `110` / `70` | Cuánto sube la carta señalada y cuánto se apartan sus vecinas. |
-| `margin_right` / `margin_bottom` | `110` / `120` | Distancia a los bordes derecho e inferior. |
+| `margin_right` / `margin_bottom` | `110` / `150` | Distancia a los bordes derecho e inferior. |
 | `showcase_anchor` | `(0.73, 0.44)` | Posición relativa donde se muestra la carta elegida. |
+| `collapse_time` | `0.55` | Duración (s) de la animación de mostrar; al ocultar dura `collapse_time × 0.8`. |
+| `collapse_stagger` | `0.12` | Desfase entre cartas al ocultar/mostrar (0 = todas a la vez). |
+| `collapse_peek` | `0` | Píxeles de las cartas que asoman al ocultar (0 = totalmente ocultas; por ejemplo `70` deja ver la punta). |
+
+Constantes internas: `HIDE_SCALE = 0.85` (las cartas se encogen al esconderse) y `HIDE_SPREAD = 0.55` (se juntan).
 
 | Función | Descripción |
 |---|---|
@@ -417,12 +430,18 @@ Orquesta la ronda de Blackjack: turnos, RPCs de red, animaciones de reparto y ma
 | `clear_hand()` | Libera todas las cartas y reinicia hover y selección. |
 | `get_selected()` | Devuelve la carta elegida (o `null`). |
 | `get_showcase_center()` | Centro, en coordenadas de la mano, donde se muestra la carta elegida (lo usa `tableui.gd` para acoplar USAR/CANCELAR). |
-| `select(joker)` | Saca la carta del abanico, la gira para mostrar la descripción y oscurece las demás. |
+| `select(joker)` | Saca la carta del abanico, la gira para mostrar la descripción y oscurece las demás (no hace nada con la mano oculta). |
 | `deselect()` | Devuelve la carta elegida al abanico y la gira de vuelta al título. |
 | `consume_selected()` | Quema la carta elegida con `quemar_y_destruir()`; las restantes se reacomodan solas. |
+| `is_collapsed()` / `get_count()` / `get_hand_center()` | Consultan si la mano está oculta, cuántas cartas tiene y el centro del abanico (lo usa `tableui.gd` para colocar el botón). |
+| `is_entering()` | `true` si alguna carta todavía vuela hacia la mano (en ese momento no se puede ocultar). |
+| `set_collapsed(value, animate = true)` | Oculta (`true`) o muestra (`false`) la mano. Al ocultar devuelve antes al abanico la carta elegida. **Ocultar:** las cartas se juntan, se enderezan, se encogen y caen fuera de la pantalla acelerando, de izquierda a derecha. **Mostrar:** suben en el mismo orden, se pasan un poco de su sitio y rebotan. Con `animate = false` el cambio es instantáneo. |
+| `toggle_collapsed()` | Alterna ocultar/mostrar; se ignora mientras las cartas entran volando o mientras la animación sigue en curso. |
+| `_local_collapse(i, n)` / `_hidden_offset_y()` | Calculan el progreso de ocultado de cada carta (con el desfase en cascada y el rebote) y cuánto hay que bajarla para sacarla de la pantalla. |
+| `_apply_input_state()` | Con la mano oculta las cartas ignoran el ratón (`MOUSE_FILTER_IGNORE`); al mostrarla lo recuperan. |
 | `_process(delta)` | Cada fotograma actualiza el hover y las poses objetivo de todas las cartas. |
 | `_update_targets()` | Calcula la pose de cada carta: abanico en reposo, carta señalada (sube, se endereza y crece; las vecinas se apartan) y carta elegida en el escaparate. |
-| `_update_hover()` / `_pick_hovered()` / `_hover_allowed()` | Hover **estable**: se decide con una "casilla" fija por carta (no con su rectángulo, que se mueve al subir) más 14 px de histéresis; se bloquea si otro control —por ejemplo el menú de pausa— está encima. |
+| `_update_hover()` / `_pick_hovered()` / `_hover_allowed()` | Hover **estable**: se decide con una "casilla" fija por carta (no con su rectángulo, que se mueve al subir) más 14 px de histéresis; se bloquea si otro control —por ejemplo el menú de pausa— está encima, o si la mano está oculta o abriéndose. |
 | `_reorder()` | Ordena los hijos para que la carta señalada y la elegida se dibujen encima (no usa `z_index`, para no tapar el menú de pausa). |
 
 ---
@@ -556,6 +575,7 @@ Cada comodín solo puede usarse una vez; al confirmarse su uso se destruye visua
 3. **Selección:** al pulsar una carta sale del abanico y se muestra grande, gira para mostrar su descripción y las demás se oscurecen; **USAR** y **CANCELAR** aparecen justo debajo de ella.
 4. **Cancelar:** botón CANCELAR, tecla `Esc` o volver a pulsar la misma carta; la carta regresa al abanico y vuelve a mostrar su título.
 5. **Usar:** se avisa al servidor (`joker_used` → `request_use_joker`), la carta arde con el shader de quemado y las cartas restantes se reacomodan para cerrar el hueco.
+6. **Ocultar / mostrar:** el botón bajo el abanico (o la tecla `J`) esconde la mano con una caída en cascada y la vuelve a mostrar con un pequeño rebote. Mientras está oculta las cartas no reciben clics ni hover, y una carta elegida vuelve antes a la mano. Con la mano vacía el botón desaparece.
 
 ---
 
@@ -601,9 +621,25 @@ Estos efectos, combinados con la niebla volumétrica configurada en el `WorldEnv
 - **Refactor de `table.gd`:** el estado y las reglas pasaron a `RoundManager.gd`, los comodines a `JokerSystem.gd` y el audio a `AudioPool.gd`; `Deck.gd` ahora es la única fuente del mazo.
 - **De 10 a 16 comodines:** nuevos `ace`, `low_blow`, `mirror`, `famine`, `vampire` y `roulette`; además `shield`, `salvation` y `curse` se rebalancearon (Maldición y Vampirismo se comportan distinto en PvE y PvP) y los mensajes de los efectos pasaron a español.
 - **Nueva mano de comodines en abanico:** `JokerHand.gd` (nuevo) y `JokerUI.gd` reescrito; `tableui.gd` integra la mano, acopla USAR/CANCELAR bajo la carta elegida y permite cancelar con `Esc`.
+- **Botón para ocultar/mostrar los comodines:** `JokerHand.set_collapsed()` / `toggle_collapsed()` con animación en cascada, botón creado por código en `tableui.gd` (`OCULTAR JOKERS` / `MOSTRAR JOKERS (n)`) y atajo `J`; el botón queda a 40 px del borde inferior y la mano se subió con `margin_bottom = 150`.
 - **Efectos visuales:** `Table.tscn` ya no aplica la distorsión de lente (el efecto sigue disponible en el addon y en `MainMenu.tscn`).
 
 **Notas conocidas**
 - `MenuUi.gd` aún mantiene su propio pooling de audio en lugar de usar `AudioPool`.
 - Los nombres de las víctimas de *Maldición* y *Vampirismo* se muestran como `Player <id>` (ver nota en [JokerSystem.gd](#jokersystemgd)).
 - Al confirmar un comodín, la carta arde en el cliente de inmediato; si el servidor rechaza el efecto (por ejemplo, durante el reparto), la carta ya se consumió.
+
+---
+
+## Pendientes
+
+- [ ] **Mejorar el menú de inicio** (`MainMenu.tscn` + `MenuUi.gd`): hacerlo más dinámico, entendible y llamativo, con una estética retrofuturista / de los años 60.
+  - Unificar la identidad visual: hoy conviven varias paletas (botones naranjas de `TemaJuego.tres`, tonos rojos de `Menus.tres` y un `ColorRect` de fondo en `MenuUI`).
+  - Dar estados reales (hover, pressed, disabled) a los botones: en `TemaJuego.tres` los cinco estados del `Button` usan el mismo `StyleBoxFlat`, así que solo cambia la escala por código (`_apply_button_juice`).
+  - Corregir el `StartGameButton` del lobby, que usa un `Theme` vacío (`Theme_6rlie`) y cae al estilo por defecto de Godot.
+  - Mejorar el feedback de conexión (hoy solo cambia el *placeholder* del campo a "Buscando sala..."), añadir un botón para copiar el código de sala y títulos por pantalla que expliquen cada paso.
+  - Revisar tipografías y tamaños para que se lean bien dentro del `SubViewport` de la TV.
+- [ ] **Mejorar el menú de la mesa** (`table_ui.tscn` + `tableui.gd`): HUD de partida y menú de pausa/ajustes.
+  - Alinear su estilo con el del menú de inicio (el HUD usa `Menus.tres` más estilos `StyleBoxFlat` propios).
+  - Revisar la distribución del HUD: el panel Pedir/Plantarse/Doblar (abajo a la izquierda) y la mano de comodines (abajo a la derecha) deben convivir sin solaparse en distintas resoluciones.
+  - Hacer más claro el estado de la partida (turno, vidas, mensajes) y pulir el menú de pausa y el de ajustes de audio.

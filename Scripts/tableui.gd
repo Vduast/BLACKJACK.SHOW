@@ -44,6 +44,7 @@ var voz_bus_idx = AudioServer.get_bus_index("Voz")
 var joker_scene = preload("res://Objetos/JokerUI.tscn")
 var selected_joker: JokerUI = null
 var joker_hand: JokerHand = null            # [JOKERS] la mano en abanico (se crea por código)
+var joker_toggle: Button = null             # [JOKERS] botón para ocultar / mostrar la mano
 var _action_tween: Tween = null             # [JOKERS] animación de la caja USAR/CANCELAR
 
 # [JOKERS] Botones USAR/CANCELAR más compactos para que quepan bajo la carta elegida.
@@ -182,6 +183,7 @@ func _setup_joker_hand() -> void:
 		parent.move_child(joker_hand, jokers_container.get_index() + 1)
 		jokers_container.hide()
 	joker_hand.joker_selected.connect(_on_joker_selected)
+	_setup_joker_toggle(parent)
 
 func _setup_joker_action_box() -> void:
 	if not COMPACT_ACTION_BUTTONS:
@@ -193,12 +195,68 @@ func _setup_joker_action_box() -> void:
 	btn_cancelar.add_theme_font_size_override("font_size", 30)
 	btn_usar.add_theme_font_size_override("font_size", 34)
 
+# ---- Botón para ocultar / mostrar la mano de comodines ----
+func _setup_joker_toggle(parent: Node) -> void:
+	joker_toggle = Button.new()
+	joker_toggle.name = "JokerToggleButton"
+	joker_toggle.theme = hit_button.theme          # mismo estilo que los demás botones del HUD
+	joker_toggle.focus_mode = Control.FOCUS_NONE
+	joker_toggle.custom_minimum_size = Vector2(330, 48)
+	joker_toggle.add_theme_font_size_override("font_size", 22)
+	joker_toggle.tooltip_text = "Atajo: J"
+	joker_toggle.visible = false
+	parent.add_child(joker_toggle)
+	# Justo después de la mano: queda encima de ella y DEBAJO del menú de pausa
+	parent.move_child(joker_toggle, joker_hand.get_index() + 1)
+	joker_toggle.pressed.connect(_on_joker_toggle_pressed)
+	joker_hand.collapsed_changed.connect(_on_joker_hand_collapsed)
+	joker_hand.hand_changed.connect(_on_joker_hand_changed)
+	get_viewport().size_changed.connect(_dock_joker_toggle)
+
+func _on_joker_toggle_pressed() -> void:
+	joker_hand.toggle_collapsed()
+
+func _on_joker_hand_collapsed(collapsed: bool) -> void:
+	# Si había una carta elegida, JokerHand ya la devolvió a la mano: limpiamos el HUD
+	if collapsed and selected_joker != null:
+		selected_joker = null
+		_hide_action_box()
+	_update_joker_toggle()
+
+func _on_joker_hand_changed(count: int) -> void:
+	# Sin comodines no hay nada que ocultar: la próxima partida empieza con la mano abierta
+	if count == 0 and joker_hand.is_collapsed():
+		joker_hand.set_collapsed(false, false)
+	_update_joker_toggle()
+
+func _update_joker_toggle() -> void:
+	if joker_toggle == null:
+		return
+	var n: int = joker_hand.get_count()
+	joker_toggle.visible = n > 0
+	if joker_hand.is_collapsed():
+		joker_toggle.text = "MOSTRAR JOKERS (%d)" % n
+	else:
+		joker_toggle.text = "OCULTAR JOKERS"
+	_dock_joker_toggle()
+
+# Centrado bajo el abanico, pegado al borde inferior de la pantalla
+func _dock_joker_toggle() -> void:
+	if joker_toggle == null or joker_hand == null:
+		return
+	var vp: Vector2 = joker_hand.get_viewport_rect().size
+	var sz: Vector2 = joker_toggle.get_combined_minimum_size()
+	joker_toggle.size = sz
+	joker_toggle.pivot_offset = sz * 0.5
+	joker_toggle.position = Vector2(joker_hand.get_hand_center().x - sz.x * 0.5, vp.y - sz.y - 70.0)
+
 func spawn_jokers(joker_ids: Array):
 	if _action_tween != null and _action_tween.is_valid():
 		_action_tween.kill()
 	joker_action_box.hide()
 	selected_joker = null
 	joker_hand.clear_hand()
+	joker_hand.set_collapsed(false, false)   # las cartas nuevas siempre entran con la mano abierta
 	
 	var i: int = 0
 	for j_id in joker_ids:
@@ -232,8 +290,13 @@ func _on_joker_confirmed():
 	joker_hand.consume_selected()    # la carta arde y las demás se reacomodan
 	_hide_action_box()
 
-# Esc cancela la carta elegida
+# Esc cancela la carta elegida; J oculta / muestra la mano de comodines
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_J:
+		if joker_toggle != null and joker_toggle.visible and not overlay_menu.visible:
+			_on_joker_toggle_pressed()
+			get_viewport().set_input_as_handled()
+			return
 	if selected_joker != null and event.is_action_pressed("ui_cancel"):
 		_on_joker_canceled()
 		get_viewport().set_input_as_handled()

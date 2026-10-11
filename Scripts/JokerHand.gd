@@ -11,17 +11,19 @@ class_name JokerHand
 ## Todo es relativo al tamaño de la ventana y se puede mover con las variables @export.
 
 signal joker_selected(joker: JokerUI)
+signal collapsed_changed(collapsed: bool)   # la mano se ocultó o se mostró
+signal hand_changed(count: int)             # cambió el número de cartas en la mano
 
 # Tamaño base notablemente mayor (Ancho x Alto)
 @export var card_size: Vector2 = Vector2(320, 420)
 
 # Escalas del ciclo visual
-@export var rest_scale: float = 1.15       # Tamaño base en reposo en la mano
-@export var hover_scale: float = 1.35      # Al pasar el cursor encima
-@export var select_scale: float = 1.85     # Vista ampliada al seleccionar para usar
+@export var rest_scale: float = 0.85      # Tamaño base en reposo en la mano
+@export var hover_scale: float = 1.0     # Al pasar el cursor encima
+@export var select_scale: float = 1.15     # Vista ampliada al seleccionar para usar
 
 # Distribución del abanico
-@export var fan_spacing: float = 260.0     # Separación horizontal amplia entre comodines
+@export var fan_spacing: float = 200.0     # Separación horizontal amplia entre comodines
 @export var fan_angle_deg: float = 8.5     # Inclinación angular
 @export var fan_arc: float = 20.0          # Curvatura del abanico
 
@@ -35,9 +37,21 @@ signal joker_selected(joker: JokerUI)
 
 @export var showcase_anchor: Vector2 = Vector2(0.73, 0.44)
 
+# --- Ocultar / mostrar la mano ---
+@export var collapse_time: float = 0.55      # duración de la animación (s)
+@export var collapse_stagger: float = 0.12   # desfase entre cartas (0 = todas a la vez)
+@export var collapse_peek: float = 0.0       # px de las cartas que asoman al ocultar (0 = ocultas del todo)
+
+const HIDE_SCALE: float = 0.85    # las cartas se encogen un poco al esconderse
+const HIDE_SPREAD: float = 0.55   # y se juntan (0 = no se juntan, 1 = se apilan)
+
 var _cards: Array[JokerUI] = []   # cartas vivas (las que arden ya no están aquí)
 var _hovered: JokerUI = null
 var _selected: JokerUI = null
+
+var _collapsed: bool = false
+var collapse_t: float = 0.0       # 0 = mano abierta, 1 = oculta (el tween lo pasa un poco de 0 o 1 para el rebote)
+var _collapse_tween: Tween = null
 
 
 func _ready() -> void:
@@ -62,6 +76,8 @@ func add_joker(joker: JokerUI, delay: float = 0.0) -> void:
 	var vp: Vector2 = get_viewport_rect().size
 	# Vuelan desde fuera de la pantalla (abajo a la derecha) girando hasta su sitio
 	joker.appear(delay, Vector2(vp.x + 120.0, vp.y + 220.0), 0.7)
+	joker.mouse_filter = Control.MOUSE_FILTER_IGNORE if _collapsed else Control.MOUSE_FILTER_STOP
+	hand_changed.emit(_cards.size())
 
 
 func clear_hand() -> void:
@@ -71,6 +87,7 @@ func clear_hand() -> void:
 	_cards.clear()
 	_hovered = null
 	_selected = null
+	hand_changed.emit(0)
 
 
 func get_selected() -> JokerUI:
@@ -83,9 +100,74 @@ func get_showcase_center() -> Vector2:
 	return Vector2(vp.x * showcase_anchor.x, vp.y * showcase_anchor.y)
 
 
+func is_collapsed() -> bool:
+	return _collapsed
+
+
+func get_count() -> int:
+	return _cards.size()
+
+
+## Centro del abanico (en coordenadas de esta mano); tableui.gd lo usa para colocar el botón.
+func get_hand_center() -> Vector2:
+	return _hand_base()
+
+
+## ¿Hay cartas todavía volando hacia la mano? (no conviene ocultarla en ese momento)
+func is_entering() -> bool:
+	for c in _cards:
+		if is_instance_valid(c) and c.is_animating_entrance:
+			return true
+	return false
+
+
+## Oculta (true) o muestra (false) la mano con una animación en cascada.
+## Con animate = false el cambio es instantáneo.
+func set_collapsed(value: bool, animate: bool = true) -> void:
+	if value == _collapsed:
+		return
+	_collapsed = value
+	if value:
+		deselect()   # una carta elegida vuelve a la mano antes de esconderse
+	_apply_input_state()
+	if _collapse_tween != null and _collapse_tween.is_valid():
+		_collapse_tween.kill()
+	var target: float = 1.0 if value else 0.0
+	if animate:
+		# Ocultar: las cartas caen acelerando (QUAD ease-in) y en cascada.
+		# Mostrar: suben pasándose un poco de su sitio y rebotan (BACK ease-out).
+		_collapse_tween = create_tween()
+		if value:
+			_collapse_tween.tween_property(self, "collapse_t", target, collapse_time * 0.8) \
+				.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+		else:
+			_collapse_tween.tween_property(self, "collapse_t", target, collapse_time) \
+				.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	else:
+		collapse_t = target
+	collapsed_changed.emit(value)
+
+
+func toggle_collapsed() -> void:
+	if is_entering():
+		return
+	# Si aún se está animando, se ignora el clic (evita saltos al cambiar de sentido a medias)
+	if _collapse_tween != null and _collapse_tween.is_valid() and _collapse_tween.is_running():
+		return
+	set_collapsed(not _collapsed)
+
+
+# Con la mano oculta las cartas no reciben clics.
+func _apply_input_state() -> void:
+	var f: int = Control.MOUSE_FILTER_IGNORE if _collapsed else Control.MOUSE_FILTER_STOP
+	for c in _cards:
+		if is_instance_valid(c):
+			c.mouse_filter = f
+
+
 ## Saca la carta de la mano, la gira para mostrar la descripción y opaca las demás.
 func select(joker: JokerUI) -> void:
-	if joker == _selected:
+	if joker == _selected or _collapsed:
 		return
 	if _selected != null and is_instance_valid(_selected):
 		_selected.girar_a_titulo()
@@ -136,14 +218,18 @@ func _on_card_burn_started(c) -> void:
 	if c == _selected:
 		_selected = null
 	_reorder()
+	hand_changed.emit(_cards.size())
 
 
 func _on_card_gone(c: JokerUI) -> void:
+	var estaba: bool = _cards.has(c)
 	_cards.erase(c)
 	if c == _hovered:
 		_hovered = null
 	if c == _selected:
 		_selected = null
+	if estaba:
+		hand_changed.emit(_cards.size())
 
 
 # ---------------------------------------------------------------- geometría del abanico
@@ -173,6 +259,8 @@ func _update_targets() -> void:
 	var hover_idx: int = -1
 	if _hovered != null:
 		hover_idx = fan.find(_hovered)
+	var hide_dy: float = _hidden_offset_y()
+	var hb: Vector2 = _hand_base()
 
 	for i in n:
 		var t: float = float(i) - float(n - 1) * 0.5
@@ -187,10 +275,38 @@ func _update_targets() -> void:
 			else:
 				var d: float = float(i - hover_idx)
 				center.x += signf(d) * hover_push / absf(d)   # las vecinas le hacen sitio
+		# Ocultar/mostrar: las cartas se juntan, se enderezan, se encogen y bajan (en cascada)
+		var lt: float = _local_collapse(i, n)
+		var k: float = clampf(lt, 0.0, 1.0)
+		center.x = hb.x + (center.x - hb.x) * (1.0 - HIDE_SPREAD * k)
+		center.y += hide_dy * lt
+		rot *= (1.0 - k)
+		sc = lerpf(sc, rest_scale * HIDE_SCALE, k)
 		fan[i].set_pose(center, rot, sc)
 
 	if _selected != null and is_instance_valid(_selected):
 		_selected.set_pose(get_showcase_center(), 0.0, select_scale)
+
+
+# Progreso de ocultado de la carta i (0 = en su sitio, 1 = oculta). Cada carta arranca un poco
+# después que la anterior; el rebote del tween (collapse_t fuera de 0..1) se suma a todas.
+func _local_collapse(i: int, n: int) -> float:
+	var base: float
+	if n <= 1 or collapse_stagger <= 0.0:
+		base = clampf(collapse_t, 0.0, 1.0)
+	else:
+		var s: float = minf(collapse_stagger, 0.9 / float(n - 1))
+		var rank: int = i if _collapsed else (n - 1 - i)   # se ocultan y aparecen de izquierda a derecha
+		base = clampf((collapse_t - float(rank) * s) / (1.0 - float(n - 1) * s), 0.0, 1.0)
+	return base + minf(collapse_t, 0.0)
+
+
+# Cuánto hay que bajar las cartas para que queden fuera de la pantalla (o asomando collapse_peek px)
+func _hidden_offset_y() -> float:
+	var vp: Vector2 = get_viewport_rect().size
+	var half_h: float = card_size.y * rest_scale * HIDE_SCALE * 0.5
+	var holgura: float = 30.0 if collapse_peek <= 0.0 else 0.0
+	return (vp.y - collapse_peek + holgura + half_h) - _hand_base().y
 
 
 # ---------------------------------------------------------------- hover estable
@@ -238,7 +354,7 @@ func _pick_hovered() -> JokerUI:
 
 func _update_hover() -> void:
 	var nuevo: JokerUI = null
-	if _hover_allowed():
+	if not _collapsed and collapse_t < 0.05 and _hover_allowed():
 		nuevo = _pick_hovered()
 	if nuevo == _hovered:
 		return
