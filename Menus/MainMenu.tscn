@@ -17,10 +17,7 @@
 [ext_resource type="AudioStream" uid="uid://ihukmk0r6vpm" path="res://sounds/random.wav" id="15_x147o"]
 [ext_resource type="AudioStream" uid="uid://b3cpk68q77mdp" path="res://sounds/Radio_static.ogg" id="16_4mmxn"]
 [ext_resource type="Shader" uid="uid://beo41x3hdryc6" path="res://Menus/MainMenu.gdshader" id="16_6rlie"]
-[ext_resource type="Script" uid="uid://cjcd56gr47iys" path="res://addons/godot_retro/effects/compositor/vhs_effect.gd" id="18_r82sl"]
 [ext_resource type="Script" uid="uid://bdsmigh4b2o11" path="res://addons/godot_retro/effects/compositor/lens_distortion_effect.gd" id="19_t25vh"]
-[ext_resource type="Script" uid="uid://cnc3ahm04gevv" path="res://addons/godot_retro/effects/compositor/sharpness_effect.gd" id="20_wcfrl"]
-[ext_resource type="Script" uid="uid://bhrup1cxyf8hk" path="res://addons/godot_retro/effects/compositor/dithering_effect.gd" id="21_tyucr"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_eiy7p"]
 emission_enabled = true
@@ -80,16 +77,6 @@ volumetric_fog_density = 0.0912
 volumetric_fog_albedo = Color(0.08468992, 0.08468992, 0.08468992, 1)
 volumetric_fog_gi_inject = 10.46
 
-[sub_resource type="CompositorEffect" id="CompositorEffect_xl8m0"]
-resource_local_to_scene = false
-resource_name = ""
-enabled = true
-effect_callback_type = 4
-needs_motion_vectors = false
-needs_normal_roughness = false
-script = ExtResource("18_r82sl")
-metadata/_custom_type_script = "uid://cjcd56gr47iys"
-
 [sub_resource type="CompositorEffect" id="CompositorEffect_6rqeb"]
 resource_local_to_scene = false
 resource_name = ""
@@ -100,29 +87,8 @@ needs_normal_roughness = false
 script = ExtResource("19_t25vh")
 metadata/_custom_type_script = "uid://bdsmigh4b2o11"
 
-[sub_resource type="CompositorEffect" id="CompositorEffect_wcfrl"]
-resource_local_to_scene = false
-resource_name = ""
-enabled = true
-effect_callback_type = 4
-needs_motion_vectors = false
-needs_normal_roughness = false
-script = ExtResource("20_wcfrl")
-metadata/_custom_type_script = "uid://cnc3ahm04gevv"
-
-[sub_resource type="CompositorEffect" id="CompositorEffect_tyucr"]
-resource_local_to_scene = false
-resource_name = ""
-enabled = true
-effect_callback_type = 4
-needs_motion_vectors = false
-needs_normal_roughness = false
-script = ExtResource("21_tyucr")
-dithering_strength = 0.041
-metadata/_custom_type_script = "uid://bhrup1cxyf8hk"
-
 [sub_resource type="Compositor" id="Compositor_10ihl"]
-compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_xl8m0"), SubResource("CompositorEffect_6rqeb"), SubResource("CompositorEffect_wcfrl"), SubResource("CompositorEffect_tyucr")])
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_6rqeb")])
 
 [node name="Node3D" type="Node3D" unique_id=1370715290]
 
